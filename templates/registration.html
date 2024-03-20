@@ -1,0 +1,9 @@
+<form action="/user/register/" method="POST">
+    {% csrf_token %}
+    <h1>Registration</h1>
+    {% for message in messages %}
+        <div>{{ message }}</div>
+    {% endfor %}
+    {{ form.as_p }}
+    <input type="submit" value="Register">
+</form>

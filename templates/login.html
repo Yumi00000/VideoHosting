@@ -1,0 +1,10 @@
+<form action="/user/login/" method="POST">
+    {% csrf_token %}
+    <h1> Login </h1>
+    {% for message in messages %}
+        <div>{{ message }}</div>
+    {% endfor %}
+
+    {{ form.as_p }}
+    <input type="submit" value="login">
+</form>

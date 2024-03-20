@@ -1,0 +1,51 @@
+version: '3'
+
+services:
+  app:
+    build:
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/app
+    command: >
+      sh -c "python3 manage.py migrate &&
+             python3 manage.py runserver 0.0.0.0:8000"
+    environment:
+      - DB_HOST=db
+      - DB_NAME=video_hosting
+      - DB_USER=yumi
+      - DB_PASS=postgres
+    depends_on:
+      - db
+      - redis
+      - celery-worker
+
+  db:
+    image: postgres
+    environment:
+      - POSTGRES_DB=video_hosting
+      - POSTGRES_USER=yumi
+      - POSTGRES_PASSWORD=postgres
+    ports:
+      - "5432:5432"
+
+
+  celery-worker:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    depends_on:
+      - redis
+    environment:
+      - CELERY_BROKER_URL=redis://redis:6379/0
+      - CELERY_RESULT_BACKEND=redis://redis:6379/0
+
+    command: celery -A videoHosting worker
+
+
+  redis:
+    image: redis:alpine
+    container_name: redis
+    expose:
+      - 6379
