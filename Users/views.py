@@ -1,7 +1,6 @@
 from celery import shared_task
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.hashers import make_password
 from django.core.mail import send_mail
 from django.core.signing import BadSignature, Signer
 from django.http import HttpResponse
@@ -16,7 +15,7 @@ from videoHosting import settings
 @shared_task(serializer='json')
 def send_activation_email(base_url, user_id):
     user_signed = Signer().sign(user_id)
-    signed_url = base_url + f"/activate/{user_signed}"
+    signed_url = base_url + f"user/activate/{user_signed}"
     send_mail(
         subject=("Registration complete"),
         message=("Click here to activate your account: " + signed_url),
@@ -38,7 +37,6 @@ def register_handler(request):
 
             form.instance.is_active = False
             form.save()
-            email = request.POST.get('email')
             send_activation_email.delay(request.build_absolute_uri('/'), form.instance.id)
             return redirect('/user/login/')
     return render(request, 'registration.html', {'form': RegisterForm()})
@@ -62,14 +60,15 @@ def login_handler(request):
     if request.method == 'POST':
         form = LoginForm(request.POST)
         if form.is_valid():
-            username = form.cleaned_data.get('login')
+            username = form.cleaned_data.get('username')
             password = form.cleaned_data.get('password')
             user = authenticate(request, username=username, password=password)
-            try:
+            if user:
                 login(request, user)
+                user.is_logged = True
                 messages.success(request, 'Welcome ' + username + '!')
-                return redirect('/user/')
-            except BadSignature:
+                return redirect('user_profile')
+            else:
                 messages.error(request, f'Data invalid. Please try again.')
                 return redirect('/user/login/')
     return render(request, 'login.html', {'form': LoginForm()})

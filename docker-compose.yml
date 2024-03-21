@@ -11,41 +11,62 @@ services:
     command: >
       sh -c "python3 manage.py migrate &&
              python3 manage.py runserver 0.0.0.0:8000"
+
     environment:
-      - DB_HOST=db
-      - DB_NAME=video_hosting
-      - DB_USER=yumi
-      - DB_PASS=postgres
+      - DOCKERIZED=True
+      - DATABASE_URL=postgresql://postgres:postgres@db:5432/video_hosting
+      - EMAIL_HOST_USER=video.hosting.ua@gmail.com
+      - EMAIL_HOST_PASSWORD=xfmz qqrc enup sifq
+
     depends_on:
       - db
-      - redis
+      - rabbitmq
       - celery-worker
+    restart: always
 
   db:
     image: postgres
     environment:
       - POSTGRES_DB=video_hosting
-      - POSTGRES_USER=yumi
+      - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
     ports:
       - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data/
+    restart: always
 
+  my-pgadmin:
+    image: dpage/pgadmin4
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=video.hosting.ua@gmail.com
+      - PGADMIN_DEFAULT_PASSWORD=pass123
+    ports:
+      - "82:80"
+    restart: always
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: "celeryuser"
+      RABBITMQ_DEFAULT_PASS: "celeryuser"
+    restart: always
 
   celery-worker:
     build:
       context: .
       dockerfile: Dockerfile
     depends_on:
-      - redis
+      - rabbitmq
     environment:
-      - CELERY_BROKER_URL=redis://redis:6379/0
-      - CELERY_RESULT_BACKEND=redis://redis:6379/0
-
+      - BROKER_URL=pyamqp://celeryuser:celeryuser@rabbitmq:5672//
+      - CELERY_RESULT_BACKEND=rpc://
     command: celery -A videoHosting worker
+    restart: always
 
+volumes:
+  pgdata:
 
-  redis:
-    image: redis:alpine
-    container_name: redis
-    expose:
-      - 6379
