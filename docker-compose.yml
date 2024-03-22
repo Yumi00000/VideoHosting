@@ -8,7 +8,6 @@ services:
       - "8000:8000"
     volumes:
       - .:/app
-      - .:/app/media
     command: >
       sh -c "python -m pip install Pillow &&
              python3 manage.py migrate &&
