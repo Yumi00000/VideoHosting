@@ -1,10 +1,11 @@
-from Users.models import CustomUser
 from django import forms
+from django.contrib.auth import authenticate
+from django.contrib.auth.forms import UserCreationForm, UserChangeForm, AuthenticationForm
+
+from Users.models import CustomUser
 
 
-class RegisterForm(forms.ModelForm):
-    password = forms.CharField(widget=forms.PasswordInput, required=True)
-    confirm_password = forms.CharField(widget=forms.PasswordInput, label="Confirm password", required=True)
+class RegisterForm(UserCreationForm):
     birthday = forms.DateField(required=True,
                                widget=forms.DateInput(format="%Y-%m-%d", attrs={"type": "date"}),
                                input_formats=["%Y-%m-%d"]
@@ -13,13 +14,19 @@ class RegisterForm(forms.ModelForm):
 
     class Meta:
         model = CustomUser
-        fields = ('username', 'password', 'confirm_password', 'first_name', 'last_name', 'birthday', 'gender',
+        fields = ('username', 'first_name', 'last_name', 'birthday', 'gender',
                   'phone_number', 'email')
 
+    def clean(self):
+        cleaned_data = super().clean()
+        password = cleaned_data.get('password')
+        password_confirmation = cleaned_data.get('confirm_password')
+        if password != password_confirmation:
+            raise forms.ValidationError('Passwords must match.')
+        return cleaned_data
 
-class LoginForm(forms.ModelForm):
-    password = forms.CharField(widget=forms.PasswordInput)
 
+class CustomUserChangeForm(UserChangeForm):
     class Meta:
         model = CustomUser
-        fields = ['username', 'password']
+        fields = ('username', 'first_name', 'last_name', 'email', 'birthday', 'gender', 'phone_number')

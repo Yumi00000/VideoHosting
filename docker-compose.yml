@@ -8,22 +8,25 @@ services:
       - "8000:8000"
     volumes:
       - .:/app
+      - .:/app/media
     command: >
-      sh -c "python3 manage.py migrate &&
+      sh -c "python -m pip install Pillow &&
+             python3 manage.py migrate &&
              python3 manage.py runserver 0.0.0.0:8000"
 
     environment:
       - DOCKERIZED=True
       - DATABASE_URL=postgresql://postgres:postgres@db:5432/video_hosting
-      - EMAIL_HOST_USER=video.hosting.ua@gmail.com
-      - EMAIL_HOST_PASSWORD=xfmz qqrc enup sifq
+      - EMAIL_HOST_USER=${EMAIL_HOST_USER}
+      - EMAIL_HOST_PASSWORD=${EMAIL_HOST_PASSWORD}
 
     depends_on:
       - db
       - rabbitmq
       - celery-worker
     restart: always
-
+    env_file:
+      - .env
   db:
     image: postgres
     environment:

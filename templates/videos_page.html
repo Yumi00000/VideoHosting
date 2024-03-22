@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<form action="/videos/" method="GET" onsubmit="chooseCategory()">
+    <label for="category">Choose filter:</label>
+    <select id="category" name="category">
+        <option value="E">Entertainments</option>
+        <option value="G">Games</option>
+        <option value="N">News</option>
+    </select>
+    <button type="submit">Apply</button>
+</form>
+
+{% for video in videos %}
+    <div>
+        <h2>{{ video.name }}</h2>
+        <video controls="controls" width="640" height="360" poster="{{ video.thumbnail.url }}" src="{{ video.video.url }}">
+            <source src="{{ video.video.url }}" type="{{ video.video_content_type }}">
+            Your browser does not support the video tag.
+        </video>
+    </div>
+{% endfor %}
+
+<script>
+    function chooseCategory() {
+        let categoryValue = document.getElementById('category').value;
+        document.querySelector('form').action = '/videos/?category=' + encodeURIComponent(categoryValue);
+    }
+</script>
+</body>
+</html>

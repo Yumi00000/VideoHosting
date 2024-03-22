@@ -1,21 +1,23 @@
 from django.contrib import admin
-from Videos.models import Video, Comment, Category
+from .models import Video, Comment, Category
 
 
 class VideoAdmin(admin.ModelAdmin):
     list_display = ('id', 'name', 'description', 'date', 'likes', 'dislikes',
-                    'watchers_count', 'comments_count', 'user')
-    search_fields = ('name', '')
+                    'watchers_count', 'comments_count', 'user', 'category')
+    search_fields = ('name',)
+
+    def comments_count(self, obj):
+        return obj.comment_set.count()
 
 
 class CommentAdmin(admin.ModelAdmin):
     list_display = ('id', 'video', 'user', 'comment', 'date')
-    search_fields = ('videos', 'user', 'comment',)
+    search_fields = ('video__name', 'user__username', 'comment')
 
 
 class CategoryAdmin(admin.ModelAdmin):
     list_display = ('id', 'name',)
-    filter_horizontal = ('videos',)
 
 
 admin.site.register(Video, VideoAdmin)
