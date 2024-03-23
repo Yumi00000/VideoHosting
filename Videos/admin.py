@@ -13,7 +13,7 @@ class VideoAdmin(admin.ModelAdmin):
 
 class CommentAdmin(admin.ModelAdmin):
     list_display = ('id', 'video', 'user', 'comment', 'date')
-    search_fields = ('video__name', 'user__username', 'comment')
+    search_fields = ('comment',)
 
 
 class CategoryAdmin(admin.ModelAdmin):

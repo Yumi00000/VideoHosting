@@ -3,12 +3,79 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
+   
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+    <script src="https://malsup.github.io/jquery.form.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('#myForm').submit(function (event) {
+                event.preventDefault();
+                var formData = $(this).serialize();
+
+                $.ajax({
+                    type: 'POST',
+                    url: $(this).attr('action'),
+                    data: formData,
+                    success: function (response) {
+                        $('#comments-container').html(response.comments_html);
+                        updateLikeDislike(response.likes, response.dislikes);
+                    },
+                    error: function (xhr, status, error) {
+                        console.error(error);
+                    }
+                });
+            });
+
+            $('.like-btn').click(function () {
+                $('#action').val('like');
+                $('#myForm').submit();
+            });
+
+            $('.dislike-btn').click(function () {
+                $('#action').val('dislike');
+                $('#myForm').submit();
+            });
+
+            function updateLikeDislike(likes, dislikes) {
+                $('.like-btn').text('Likes: ' + likes);
+                $('.dislike-btn').text('Dislikes: ' + dislikes);
+            }
+        });
+    </script>
 </head>
 <body>
-<form action="/videos/{{ video.url }}/" method="POST">
+<form id="myForm" action="/{{ video.name }}/" method="POST">
     {% csrf_token %}
-    {{ video_form.as_p }}
-    <button type="submit">Save</button>
+    <input type="hidden" id="action" name="action">
+    <div>
+        <video controls="controls" width="640" height="360" poster="{{ video.thumbnail.url }}"
+               src="{{ video.video.url }}">
+            <source src="{{ video.video.url }}" type="{{ video.video_content_type }}">
+            Your browser does not support the video tag.
+        </video>
+    </div>
+    <div>
+        {{ video.date }}<br>
+        <button type="submit" class="like-btn">Likes: {{ video.likes }}</button>
+        <button type="submit" class="dislike-btn">Dislikes: {{ video.dislikes }}</button>
+        Watchers Count: {{ video.watchers_count }} <br>
+        <label>Description: {{ video.description }}</label><br>
+        Category: {{ video.category.name }}<br>
+        Uploaded By: {{ video.user.username }}<br>
+
+        {% if messages %}
+            <ul>
+                {% for message in messages %}
+                    <li>{{ message }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+
+        <div id="comments-container">
+            {% include 'comments_section.html' %}
+        </div>
+    </div>
 </form>
 </body>
 </html>

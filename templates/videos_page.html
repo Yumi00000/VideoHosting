@@ -15,15 +15,21 @@
     <button type="submit">Apply</button>
 </form>
 
+
+
+
 {% for video in videos %}
+    <h2>{{ video.name }}</h2>
+
     <div>
-        <h2>{{ video.name }}</h2>
-        <video controls="controls" width="640" height="360" poster="{{ video.thumbnail.url }}" src="{{ video.video.url }}">
-            <source src="{{ video.video.url }}" type="{{ video.video_content_type }}">
-            Your browser does not support the video tag.
-        </video>
+        <a href="/{{ video.name }}/">
+            <img src="{{ video.thumbnail.url }}" alt="">
+            
+        </a>
     </div>
+
 {% endfor %}
+
 
 <script>
     function chooseCategory() {

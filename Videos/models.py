@@ -1,3 +1,4 @@
+from django.utils import timezone
 from django.db import models
 from Users.models import CustomUser
 
@@ -15,7 +16,7 @@ class Video(models.Model):
     comments_count = models.IntegerField(default=0)
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='videos')
     category = models.ForeignKey('Category', on_delete=models.CASCADE, related_name='category')
-    comments = models.ManyToManyField('Comment', blank=True, related_name='comments')
+    comments = models.ForeignKey('Comment', on_delete=models.CASCADE, related_name='comments', null=True)
 
     def __str__(self):
         return str(self.id)
@@ -26,7 +27,10 @@ class Comment(models.Model):
     video = models.ForeignKey(Video, on_delete=models.CASCADE, related_name='video_comments')
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='video_comments')
     comment = models.CharField(max_length=268)
-    date = models.DateTimeField(auto_now_add=True)
+    date = models.DateTimeField(default=timezone.now)
+
+    def __str__(self):
+        return str(self.id)
 
 
 class Category(models.Model):

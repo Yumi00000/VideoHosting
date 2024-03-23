@@ -1,5 +1,5 @@
 from django import forms
-from Videos.models import Video
+from Videos.models import Video, Comment
 
 
 class VideoUploadForm(forms.ModelForm):
@@ -8,4 +8,5 @@ class VideoUploadForm(forms.ModelForm):
     class Meta:
         model = Video
         fields = ['video', 'thumbnail', 'name', 'description', 'category']
+
 
