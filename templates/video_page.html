@@ -10,29 +10,31 @@
     <script>
         $(document).ready(function () {
             // Submit form on comment submit
-            $('#commentForm').submit(function(event) {
+            $('#commentForm').submit(function (event) {
                 event.preventDefault();
                 var formData = $(this).serialize();
                 $.ajax({
                     type: 'POST',
                     url: $(this).attr('action'),
                     data: formData,
-                    success: function(response) {
+                    success: function (response) {
                         $('#comments-container').html(response.comments_html);
+                        // Update comments count
+                        $('#comments-count').text('Comments Count: ' + response.comments_count);
                     },
-                    error: function(xhr, status, error) {
+                    error: function (xhr, status, error) {
                         console.error(error);
                     }
                 });
             });
 
             // Like button click event
-            $('button[name="action"][value="like"]').click(function() {
+            $('button[name="action"][value="like"]').click(function () {
                 var videoName = "{{ video.name }}";
                 $.ajax({
                     type: 'POST',
                     url: '/' + videoName + '/',
-                    data: { action: 'like', csrfmiddlewaretoken: '{{ csrf_token }}' },
+                    data: {action: 'like', csrfmiddlewaretoken: '{{ csrf_token }}'},
                     success: function (response) {
                         $('#comments-container').html(response.comments_html);
                         // Update like count
@@ -46,12 +48,12 @@
             });
 
             // Dislike button click event
-            $('button[name="action"][value="dislike"]').click(function() {
+            $('button[name="action"][value="dislike"]').click(function () {
                 var videoName = "{{ video.name }}";
                 $.ajax({
                     type: 'POST',
                     url: '/' + videoName + '/',
-                    data: { action: 'dislike', csrfmiddlewaretoken: '{{ csrf_token }}' },
+                    data: {action: 'dislike', csrfmiddlewaretoken: '{{ csrf_token }}'},
                     success: function (response) {
                         $('#comments-container').html(response.comments_html);
                         // Update dislike count
@@ -88,7 +90,7 @@
     Category: {{ video.category.name }}<br>
     Uploaded By: <a href="/user/videos/{{ video.user.username }}/">{{ video.user.username }}</a> <br>
 
-   
+
 </div>
 <form id="commentForm" action="/{{ video.name }}/" method="POST">
     {% csrf_token %}

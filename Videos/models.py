@@ -41,8 +41,7 @@ class Category(models.Model):
 
 class LikesAndDislikes(models.Model):
     id = models.AutoField(primary_key=True)
-    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, related_name='user_likes_and_dislikes',
-                                unique=True)
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='user_likes_and_dislikes')
     video = models.ForeignKey(Video, on_delete=models.CASCADE, related_name='video_likes_and_dislikes')
     like = models.BooleanField(default=False)
     dislike = models.BooleanField(default=False)
