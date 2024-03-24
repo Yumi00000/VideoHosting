@@ -66,7 +66,7 @@ def login_handler(request):
             if user is not None:
                 login(request, user)
                 # Redirect to a success page
-                return redirect('user_profile')
+                return redirect('/user/')
             else:
                 # Authentication failed, handle the error
                 messages.error(request, 'Invalid username or password.')
@@ -84,4 +84,4 @@ def user_info(request, username):
 
 @login_required(login_url='/user/login/')
 def user_profile(request):
-    return HttpResponseRedirect('OK')
+    return HttpResponse('OK')
