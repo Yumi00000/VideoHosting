@@ -10,8 +10,6 @@ class Video(models.Model):
     name = models.CharField(max_length=50)
     description = models.TextField(max_length=268)
     date = models.DateTimeField(auto_now_add=True)
-    likes = models.IntegerField(default=0)
-    dislikes = models.IntegerField(default=0)
     watchers_count = models.IntegerField(default=0)
     comments_count = models.IntegerField(default=0)
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='videos')
@@ -39,3 +37,12 @@ class Category(models.Model):
 
     def __str__(self):
         return self.name
+
+
+class LikesAndDislikes(models.Model):
+    id = models.AutoField(primary_key=True)
+    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, related_name='user_likes_and_dislikes',
+                                unique=True)
+    video = models.ForeignKey(Video, on_delete=models.CASCADE, related_name='video_likes_and_dislikes')
+    like = models.BooleanField(default=False)
+    dislike = models.BooleanField(default=False)

@@ -4,12 +4,12 @@ import subprocess
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.template.loader import render_to_string
 
 from videoHosting import settings
 from Videos.forms import VideoUploadForm
-from Videos.models import Video, Comment
+from Videos.models import Video, Comment, LikesAndDislikes
 
 
 @login_required(login_url='/user/login')
@@ -60,34 +60,52 @@ def videos_page(request):
 
 
 def video_page(request, video_name):
-    video = Video.objects.get(name=video_name)
-    comments = Comment.objects.filter(video_id=video.id).order_by('-date')
+    video = get_object_or_404(Video, name=video_name)
+
+    # Increment watchers_count and save the video
     video.watchers_count += 1
     video.save()
+
+    # Get comments
+    comments = Comment.objects.filter(video=video).order_by('-date')
 
     if request.method == 'POST':
         if request.user.is_authenticated:
             content = request.POST.get('comment')
             if content:
+                # Create and save a new comment
+                Comment.objects.create(user=request.user, video=video, comment=content)
+                # Increment comments_count
                 video.comments_count += 1
                 video.save()
-                comment = Comment.objects.create(user=request.user, video_id=video.id, comment=content)
-                comment.save()
-            action = request.POST.get('action')
-            if action == 'like':
-                video.likes += 1
-            elif action == 'dislike':
-                video.dislikes += 1
-            video.save()
-            comments = Comment.objects.filter(video_id=video.id).order_by('-date')
-            comments_html = render_to_string('comments_section.html', {'comments': comments, 'video': video})
-            response_data = {
-                'comments_html': comments_html,
-                'likes': video.likes,
-                'dislikes': video.dislikes
-            }
-            return JsonResponse(response_data)
-        else:
-            messages.error(request, 'Please log in to add a comment.')
 
-    return render(request, 'video_page.html', {'video': video, 'comments': comments})
+            # Toggle like/dislike
+            action = request.POST.get('action')
+            if action in ['like', 'dislike']:
+                likes_obj, created = LikesAndDislikes.objects.get_or_create(user=request.user, video=video)
+                if action == 'like':
+                    likes_obj.like = not likes_obj.like
+                    likes_obj.dislike = False
+                else:
+                    likes_obj.dislike = not likes_obj.dislike
+                    likes_obj.like = False
+                likes_obj.save()
+
+            # Get updated counts
+            likes = LikesAndDislikes.objects.filter(video=video, like=True).count()
+            dislikes = LikesAndDislikes.objects.filter(video=video, dislike=True).count()
+
+            # Get updated comments
+            comments = Comment.objects.filter(video=video).order_by('-date')
+            comments_html = render_to_string('comments_section.html', {'comments': comments, 'video': video})
+            return JsonResponse({'comments_html': comments_html, 'likes': likes, 'dislikes': dislikes})
+
+        else:
+            messages.error(request, 'Please log in to add a comment or like/dislike.')
+
+    # Get like and dislike counts
+    likes = LikesAndDislikes.objects.filter(video=video, like=True).count()
+    dislikes = LikesAndDislikes.objects.filter(video=video, dislike=True).count()
+
+    return render(request, 'video_page.html',
+                  {'video': video, 'comments': comments, 'likes': likes, 'dislikes': dislikes})

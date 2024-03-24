@@ -3,7 +3,7 @@ from .models import Video, Comment, Category
 
 
 class VideoAdmin(admin.ModelAdmin):
-    list_display = ('id', 'name', 'description', 'date', 'likes', 'dislikes',
+    list_display = ('id', 'name', 'description', 'date',
                     'watchers_count', 'comments_count', 'user', 'category')
     search_fields = ('name',)
 
