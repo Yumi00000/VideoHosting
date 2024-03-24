@@ -36,7 +36,6 @@
                     url: '/' + videoName + '/',
                     data: {action: 'like', csrfmiddlewaretoken: '{{ csrf_token }}'},
                     success: function (response) {
-                        $('#comments-container').html(response.comments_html);
                         // Update like count
                         $('button[name="action"][value="like"]').text('Like: ' + response.likes);
                         $('button[name="action"][value="dislike"]').text('Dislike: ' + response.dislikes);
@@ -55,7 +54,6 @@
                     url: '/' + videoName + '/',
                     data: {action: 'dislike', csrfmiddlewaretoken: '{{ csrf_token }}'},
                     success: function (response) {
-                        $('#comments-container').html(response.comments_html);
                         // Update dislike count
                         $('button[name="action"][value="like"]').text('Like: ' + response.likes);
                         $('button[name="action"][value="dislike"]').text('Dislike: ' + response.dislikes);
@@ -66,6 +64,7 @@
                 });
             });
         });
+
     </script>
 
 </head>
