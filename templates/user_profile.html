@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+{{ user.username }}
+{{ user.followers_count }}
+{{ user.followings_count }}
+{% for video in  videos %}
+    <a href="/user/videos/{{ video.name }}/"><img src="{{ video.thumbnail.url }}" alt="{{ video.name }}" width="300p"
+                                    height="150p"></a>
+{% endfor %}
+</body>
+</html>

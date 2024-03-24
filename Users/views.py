@@ -3,13 +3,14 @@ from django.contrib.auth import login, authenticate
 from django.contrib.auth.decorators import login_required
 from django.core.mail import send_mail
 from django.core.signing import BadSignature, Signer
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.contrib.auth.forms import AuthenticationForm
 
 from Users.forms import RegisterForm
 from Users.models import CustomUser
+from Videos.models import Video
 from videoHosting import settings
 
 
@@ -75,6 +76,12 @@ def login_handler(request):
     return render(request, 'login.html', {'form': form})
 
 
+def user_info(request, username):
+    user = CustomUser.objects.get(username=username)
+    videos = Video.objects.filter(user_id=user.id)
+    return render(request, 'user_profile.html', {'user': user, 'videos': videos})
+
+
 @login_required(login_url='/user/login/')
 def user_profile(request):
-    return HttpResponse('OK')
+    return HttpResponseRedirect('OK')

@@ -31,7 +31,7 @@ def upload_video(request):
 
 def generate_thumbnail(video_path, video):
     if os.path.exists(video_path):
-        if video.thumbnail is None:
+        if not video.thumbnail:
             thumbnail_name = os.path.splitext(os.path.basename(video_path))[0] + '.jpg'
             thumbnail_path = os.path.join(settings.MEDIA_ROOT, 'thumbnails', thumbnail_name)
 
@@ -73,8 +73,6 @@ def video_page(request, video_name):
                 video.save()
                 comment = Comment.objects.create(user=request.user, video_id=video.id, comment=content)
                 comment.save()
-
-            # Get the action parameter from the POST request
             action = request.POST.get('action')
             if action == 'like':
                 video.likes += 1

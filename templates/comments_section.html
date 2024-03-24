@@ -1,9 +1,9 @@
+Comments Count {{ video.comments_count }}<br>
+<textarea name="comment" id="comment-input" placeholder="Add comment here" maxlength="268"
+          style="width: 1000px; height: 100px; vertical-align: top; resize: none"></textarea><br>
+<br>
+<input type="submit" value="Submit">
 {% if comments %}
-    Comments Count {{ video.comments_count }}<br>
-    <textarea name="comment" id="comment-input" placeholder="Add comment here" maxlength="268"
-              style="width: 1000px; height: 100px; vertical-align: top; resize: none"></textarea><br>
-    <br>
-    <input type="submit" value="Submit">
     {% for comment in comments %}
         <div class="comment">
             {{ comment.user.username }}<br>

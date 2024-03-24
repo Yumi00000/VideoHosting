@@ -39,3 +39,11 @@ class CustomUser(AbstractUser):
 
     def __str__(self):
         return self.username
+
+
+class Followers(models.Model):
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='following')
+    following = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='followers')
+
+    def __str__(self):
+        return f'{self.following}'

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
-   
+
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 
     <script src="https://malsup.github.io/jquery.form.js"></script>
@@ -62,7 +62,7 @@
         Watchers Count: {{ video.watchers_count }} <br>
         <label>Description: {{ video.description }}</label><br>
         Category: {{ video.category.name }}<br>
-        Uploaded By: {{ video.user.username }}<br>
+        Uploaded By: <a href="/user/videos/{{ video.user.username }}/">{{ video.user.username }}</a> <br>
 
         {% if messages %}
             <ul>
@@ -74,6 +74,7 @@
 
         <div id="comments-container">
             {% include 'comments_section.html' %}
+
         </div>
     </div>
 </form>
