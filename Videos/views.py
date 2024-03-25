@@ -59,27 +59,19 @@ def videos_page(request):
 
 def video_page(request, video_name):
     video = get_object_or_404(Video, name=video_name)
-
-    # Increment watchers_count and save the video
     video.watchers_count += 1
     video.save()
-
-    # Get comments
     comments = Comment.objects.filter(video=video).order_by('-date')
 
     if request.method == 'POST':
         if request.user.is_authenticated:
             content = request.POST.get('comment')
             if content:
-                # Create and save a new comment
                 Comment.objects.create(user=request.user, video=video, comment=content)
-                # Increment comments_count
                 video.comments_count += 1
                 video.save()
-
-            # Toggle like/dislike
             action = request.POST.get('action')
-            if action in ['like', 'dislike']:
+            if action in ['like', 'dislike'] and request.user != video.user:
                 likes_obj, created = LikesAndDislikes.objects.get_or_create(user=request.user, video=video)
                 if action == 'like':
                     likes_obj.like = not likes_obj.like
@@ -88,16 +80,15 @@ def video_page(request, video_name):
                     likes_obj.dislike = not likes_obj.dislike
                     likes_obj.like = False
                 likes_obj.save()
-            if action == 'follow':
+            if action == 'follow' and request.user != video.user:
                 follows_obj, created = Followers.objects.get_or_create(user=video.user, following=request.user)
                 follows_obj.is_follow = not follows_obj.is_follow
 
                 follows_obj.save()
-            follow_count = Followers.objects.filter(user=request.user, is_follow=True).count()
+            follow_count = Followers.objects.filter(user=video.user, is_follow=True).count()
             likes = LikesAndDislikes.objects.filter(video=video, like=True).count()
             dislikes = LikesAndDislikes.objects.filter(video=video, dislike=True).count()
 
-            # Get updated comments
             comments = Comment.objects.filter(video=video).order_by('-date')
             comments_html = render_to_string('comments_section.html', {'comments': comments, 'video': video})
             return JsonResponse(
@@ -106,7 +97,7 @@ def video_page(request, video_name):
         else:
             messages.error(request, 'Please log in to add a comment or like/dislike.')
 
-    follow_count = Followers.objects.filter(user=request.user, is_follow=True).count()
+    follow_count = Followers.objects.filter(user=video.user, is_follow=True).count()
     likes = LikesAndDislikes.objects.filter(video=video, like=True).count()
     dislikes = LikesAndDislikes.objects.filter(video=video, dislike=True).count()
 
