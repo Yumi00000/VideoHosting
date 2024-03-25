@@ -1,5 +1,5 @@
 from django import forms
-from Videos.models import Video, Comment, Category
+from Videos.models import Video
 
 
 class VideoUploadForm(forms.ModelForm):

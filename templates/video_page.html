@@ -63,6 +63,22 @@
                     }
                 });
             });
+            $('button[name="action"][value="follow"]').click(function () {
+                var videoName = "{{ video.name }}";
+                $.ajax({
+                    type: 'POST',
+                    url: '/' + videoName + '/',
+                    data: {action: 'follow', csrfmiddlewaretoken: '{{ csrf_token }}'},
+                    success: function (response) {
+                        // Update dislike count
+                        $('button[name="action"][value="follow"]').text('follow: ' + response.follow_count);
+                        
+                    },
+                    error: function (xhr, status, error) {
+                        console.error(error);
+                    }
+                });
+            });
         });
 
     </script>
@@ -86,8 +102,13 @@
     <button type="button" name="action" value="dislike">Dislike: {{ dislikes }}</button>
 
     <label>Description: {{ video.description }}</label><br>
-    Category: {{ video.category.name }}<br>
-    Uploaded By: <a href="/user/videos/{{ video.user.username }}/">{{ video.user.username }}</a> <br>
+
+    Uploaded By: <a href="/user/videos/{{ video.user.username }}/">{{ video.user.username }}</a>
+    <button type="button" name="action" value="follow" id="follow-button">Follow:
+        <span id="follow-count">{{ follow_count }}</span>
+    </button>
+
+    <br>
 
 
 </div>

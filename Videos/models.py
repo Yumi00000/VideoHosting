@@ -13,8 +13,8 @@ class Video(models.Model):
     watchers_count = models.IntegerField(default=0)
     comments_count = models.IntegerField(default=0)
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='videos')
-    category = models.ForeignKey('Category', on_delete=models.CASCADE, related_name='category')
-    comments = models.ForeignKey('Comment', on_delete=models.CASCADE, related_name='comments', null=True)
+    category = models.CharField(max_length=50,
+                                choices=(('G', 'Games'), ('E', 'Entertainments'), ('N', 'News')))
 
     def __str__(self):
         return str(self.id)
@@ -29,14 +29,6 @@ class Comment(models.Model):
 
     def __str__(self):
         return str(self.id)
-
-
-class Category(models.Model):
-    id = models.AutoField(primary_key=True)
-    name = models.CharField(max_length=50, choices=(('G', 'Games'), ('E', 'Entertainments'), ('N', 'News')))
-
-    def __str__(self):
-        return self.name
 
 
 class LikesAndDislikes(models.Model):

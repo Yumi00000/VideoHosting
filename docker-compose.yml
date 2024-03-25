@@ -44,7 +44,7 @@ services:
       - PGADMIN_DEFAULT_EMAIL=video.hosting.ua@gmail.com
       - PGADMIN_DEFAULT_PASSWORD=pass123
     ports:
-      - "82:80"
+      - "80:80"
     restart: always
 
   rabbitmq:

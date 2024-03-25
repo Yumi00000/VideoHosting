@@ -1,13 +1,13 @@
 import os
 import subprocess
 
-from celery import shared_task
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.template.loader import render_to_string
 
+from Users.models import Followers
 from videoHosting import settings
 from Videos.forms import VideoUploadForm
 from Videos.models import Video, Comment, LikesAndDislikes
@@ -88,22 +88,28 @@ def video_page(request, video_name):
                     likes_obj.dislike = not likes_obj.dislike
                     likes_obj.like = False
                 likes_obj.save()
+            if action == 'follow':
+                follows_obj, created = Followers.objects.get_or_create(user=video.user, following=request.user)
+                follows_obj.is_follow = not follows_obj.is_follow
 
-            # Get updated counts
+                follows_obj.save()
+            follow_count = Followers.objects.filter(user=request.user, is_follow=True).count()
             likes = LikesAndDislikes.objects.filter(video=video, like=True).count()
             dislikes = LikesAndDislikes.objects.filter(video=video, dislike=True).count()
 
             # Get updated comments
             comments = Comment.objects.filter(video=video).order_by('-date')
             comments_html = render_to_string('comments_section.html', {'comments': comments, 'video': video})
-            return JsonResponse({'comments_html': comments_html, 'likes': likes, 'dislikes': dislikes})
+            return JsonResponse(
+                {'comments_html': comments_html, 'likes': likes, 'dislikes': dislikes, 'follow_count': follow_count})
 
         else:
             messages.error(request, 'Please log in to add a comment or like/dislike.')
 
-    # Get like and dislike counts
+    follow_count = Followers.objects.filter(user=request.user, is_follow=True).count()
     likes = LikesAndDislikes.objects.filter(video=video, like=True).count()
     dislikes = LikesAndDislikes.objects.filter(video=video, dislike=True).count()
 
     return render(request, 'video_page.html',
-                  {'video': video, 'comments': comments, 'likes': likes, 'dislikes': dislikes})
+                  {'video': video, 'comments': comments, 'likes': likes, 'dislikes': dislikes,
+                   'follow_count': follow_count})

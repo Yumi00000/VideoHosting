@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Video, Comment, Category
+from .models import Video, Comment
 
 
 class VideoAdmin(admin.ModelAdmin):
@@ -16,10 +16,5 @@ class CommentAdmin(admin.ModelAdmin):
     search_fields = ('comment',)
 
 
-class CategoryAdmin(admin.ModelAdmin):
-    list_display = ('id', 'name',)
-
-
 admin.site.register(Video, VideoAdmin)
 admin.site.register(Comment, CommentAdmin)
-admin.site.register(Category, CategoryAdmin)
