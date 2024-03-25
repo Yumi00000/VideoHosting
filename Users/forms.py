@@ -27,6 +27,14 @@ class RegisterForm(UserCreationForm):
 
 
 class CustomUserChangeForm(UserChangeForm):
-    class Meta:
+    birthday = forms.DateField(required=True,
+                               widget=forms.DateInput(format="%Y-%m-%d", attrs={"type": "date"}),
+                               input_formats=["%Y-%m-%d"]
+                               )
+    first_name = forms.CharField(required=True)
+
+    class Meta(UserChangeForm.Meta):
         model = CustomUser
         fields = ('username', 'first_name', 'last_name', 'email', 'birthday', 'gender', 'phone_number')
+
+

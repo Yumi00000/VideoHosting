@@ -8,6 +8,7 @@
 <form action="/videos/" method="GET" onsubmit="chooseCategory()">
     <label for="category">Choose filter:</label>
     <select id="category" name="category">
+        <option value="A">All</option>
         <option value="E">Entertainments</option>
         <option value="G">Games</option>
         <option value="N">News</option>
@@ -23,7 +24,7 @@
 
     <div>
         <a href="/{{ video.name }}/">
-            <img src="{{ video.thumbnail.url }}">
+            <img src="{{ video.thumbnail.url }}" width="300" height="150">
         </a>
     </div>
 

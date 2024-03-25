@@ -1,6 +1,7 @@
 import os
 import subprocess
 
+from celery import shared_task
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
@@ -53,9 +54,6 @@ def videos_page(request):
     category_param = request.GET.get('category')
     if category_param and category_param != 'all':
         videos = Video.objects.filter(category__name=category_param)
-    for video in videos:
-        print(video.thumbnail.url)
-        print(video.video.url)
     return render(request, 'videos_page.html', {'videos': videos})
 
 

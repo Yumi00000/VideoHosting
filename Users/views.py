@@ -1,14 +1,13 @@
 from celery import shared_task
-from django.contrib.auth import login, authenticate
+from django.contrib.auth import login, authenticate, update_session_auth_hash
 from django.contrib.auth.decorators import login_required
 from django.core.mail import send_mail
 from django.core.signing import BadSignature, Signer
-from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, redirect
 from django.contrib import messages
-from django.contrib.auth.forms import AuthenticationForm
+from django.contrib.auth.forms import AuthenticationForm, PasswordChangeForm
 
-from Users.forms import RegisterForm
+from Users.forms import RegisterForm, CustomUserChangeForm
 from Users.models import CustomUser
 from Videos.models import Video
 from videoHosting import settings
@@ -84,4 +83,28 @@ def user_info(request, username):
 
 @login_required(login_url='/user/login/')
 def user_profile(request):
-    return HttpResponse('OK')
+    if request.method == 'POST':
+        form = CustomUserChangeForm(request.POST, instance=request.user)
+        if form.is_valid():
+            form.save()
+            return redirect(f'/user/videos/{request.user.username}/')
+    else:
+        form = CustomUserChangeForm(instance=request.user)  # Initialize form with user instance
+
+    return render(request, 'user_cabinet.html', {'form': form})
+
+
+@login_required(login_url='/user/login/')
+def change_password(request):
+    if request.method == 'POST':
+        form = PasswordChangeForm(request.user, request.POST)
+        if form.is_valid():
+            user = form.save()
+            update_session_auth_hash(request, user)  # Important!
+            messages.success(request, 'Your password was successfully updated!')
+            return redirect('user_profile')
+        else:
+            messages.error(request, 'Please correct the error below.')
+    else:
+        form = PasswordChangeForm(request.user)
+    return render(request, 'change_password.html', {'form': form})
