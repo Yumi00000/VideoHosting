@@ -89,7 +89,7 @@ def user_profile(request, username):
     user_id = request.user.id
     user = CustomUser.objects.get(username=username)
     videos = Video.objects.filter(user_id=user.id)
-    return render(request, 'user_profile.html', {'user': user, 'videos': videos, 'user_id':user_id})
+    return render(request, 'user_profile.html', {'user': user, 'videos': videos, 'user_id': user_id})
 
 
 @login_required(login_url='/user/login/')
@@ -100,7 +100,7 @@ def user_cabinet(request):
             form.save()
             return redirect(f'/user/videos/{request.user.username}/')
     else:
-        form = CustomUserChangeForm(instance=request.user)  # Initialize form with user instance
+        form = CustomUserChangeForm(instance=request.user)
 
     return render(request, 'user_cabinet.html', {'form': form})
 
@@ -121,8 +121,4 @@ def change_password(request):
     return render(request, 'change_password.html', {'form': form})
 
 
-def top_info_view(request):
-    user = request.user
-    playlists = Playlist.objects.filter(user_id=user.id).all
 
-    return render(request, 'top_info.html', {'playlists': playlists, 'user': user})

@@ -85,7 +85,7 @@
                     var videoId = {{ video.id }};
                     $.ajax({
                         type: 'POST',
-                        url: '/playlist/add/' + playlistSlug + '/' + videoId + '/',
+                        url: '/playlists/add/' + playlistSlug + '/' + videoId + '/',
                         data: {csrfmiddlewaretoken: '{{ csrf_token }}'},
                         success: function (response) {
                             alert('Video added to playlist successfully.');

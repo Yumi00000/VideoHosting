@@ -17,13 +17,7 @@
 <a href="/">Back to all videos</a>
 
 <a href="/user/">Change user info</a> <br>
-{% if playlists %}
-    {% for playlist in playlists %}
-        <a href="/playlist/all/{{ playlist.slug }}/">Your playlists: {{ playlist.name }}</a>
-    {% endfor %}
-    <a href="/playlist/create/">Create new playlist</a>
-{% else %}
-    <p>You don't have any playlists yet. <a href="/playlist/create/">Create one</a></p>
-{% endif %}
+<a href="/playlists/">Your Playlists</a><br>
+<a href="/playlists/create/">Create new playlist</a>
 </body>
 </html>

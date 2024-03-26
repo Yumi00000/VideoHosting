@@ -33,3 +33,7 @@ def view_playlist(request, playlist_slug):
     playlist = get_object_or_404(Playlist, slug=playlist_slug)
     return render(request, 'view_playlist.html', {'playlist': playlist})
 
+
+def all_playlists(request):
+    playlists = Playlist.objects.filter(user_id=request.user.id).all
+    return render(request, 'all_playlists.html', {"playlists": playlists})
