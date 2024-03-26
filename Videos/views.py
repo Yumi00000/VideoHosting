@@ -8,6 +8,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.template.loader import render_to_string
 
 from Users.models import Followers
+from VideoInteractions.models import Playlist
 from videoHosting import settings
 from Videos.forms import VideoUploadForm
 from Videos.models import Video, Comment, LikesAndDislikes
@@ -85,6 +86,7 @@ def video_page(request, video_name):
                 follows_obj.is_follow = not follows_obj.is_follow
 
                 follows_obj.save()
+
             follow_count = Followers.objects.filter(user=video.user, is_follow=True).count()
             likes = LikesAndDislikes.objects.filter(video=video, like=True).count()
             dislikes = LikesAndDislikes.objects.filter(video=video, dislike=True).count()
@@ -100,7 +102,9 @@ def video_page(request, video_name):
     follow_count = Followers.objects.filter(user=video.user, is_follow=True).count()
     likes = LikesAndDislikes.objects.filter(video=video, like=True).count()
     dislikes = LikesAndDislikes.objects.filter(video=video, dislike=True).count()
-
+    context = {'video': video, 'comments': comments, 'likes': likes, 'dislikes': dislikes,
+               'follow_count': follow_count}
+    if request.user.is_authenticated and Playlist.objects.filter(user=request.user).exists():
+        context['playlist'] = Playlist.objects.filter(user=request.user).all()
     return render(request, 'video_page.html',
-                  {'video': video, 'comments': comments, 'likes': likes, 'dislikes': dislikes,
-                   'follow_count': follow_count})
+                  context=context)
