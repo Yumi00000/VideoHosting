@@ -8,7 +8,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.template.loader import render_to_string
 
 from Users.models import Followers
-from VideoInteractions.models import Playlist
+from VideoInteractions.models import Playlist, History
 from videoHosting import settings
 from Videos.forms import VideoUploadForm
 from Videos.models import Video, Comment, LikesAndDislikes
@@ -61,6 +61,13 @@ def videos_page(request):
 def video_page(request, video_name):
     video = get_object_or_404(Video, name=video_name)
     video.watchers_count += 1
+    history, created = History.objects.get_or_create(user=request.user)
+    if created:
+        history.videos.add(video)
+    else:
+        history.videos.set([video.id])
+    history.save()
+
     video.save()
     comments = Comment.objects.filter(video=video).order_by('-date')
 
