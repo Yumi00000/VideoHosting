@@ -72,15 +72,34 @@
                     success: function (response) {
                         // Update dislike count
                         $('button[name="action"][value="follow"]').text('follow: ' + response.follow_count);
-                        
+
                     },
                     error: function (xhr, status, error) {
                         console.error(error);
                     }
                 });
             });
-        });
+            $(document).ready(function () {
+                $('#add-to-playlist-btn').click(function () {
+                    var playlistSlug = $('#playlist-select').val();
+                    var videoId = {{ video.id }};
+                    $.ajax({
+                        type: 'POST',
+                        url: '/playlist/add/' + playlistSlug + '/' + videoId + '/',
+                        data: {csrfmiddlewaretoken: '{{ csrf_token }}'},
+                        success: function (response) {
+                            alert('Video added to playlist successfully.');
+                            // You can perform additional actions after adding the video to the playlist if needed
+                        },
+                        error: function (xhr, status, error) {
+                            console.error(error);
+                            alert('An error occurred while adding the video to the playlist.');
+                        }
+                    });
+                });
+            });
 
+        });
     </script>
 
 </head>
@@ -100,6 +119,19 @@
     <!-- Like and dislike buttons -->
     <button type="button" name="action" value="like">Like: {{ likes }}</button>
     <button type="button" name="action" value="dislike">Dislike: {{ dislikes }}</button>
+    {% if playlist %}
+        <div>
+            <label>Select a playlist to add this video:</label>
+            <select id="playlist-select">
+                {% for playlist in playlist %}
+                    <option value="{{ playlist.slug }}">{{ playlist.name }}</option>
+                {% endfor %}
+            </select>
+            <button type="button" id="add-to-playlist-btn">Add to Playlist</button>
+        </div>
+    {% else %}
+        <p>You don't have any playlists yet. <a href="{% url 'create_playlist' video.id %}">Create one</a></p>
+    {% endif %}
 
     <label>Description: {{ video.description }}</label><br>
 

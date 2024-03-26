@@ -1,0 +1,20 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ playlist.name }}</title>
+</head>
+<body>
+<h1>{{ playlist.name }}</h1>
+<ul>
+    {% for video in playlist.videos.all %}
+        <h2>{{ video.name }}</h2>
+
+        <div>
+            <a href="/{{ video.name }}/">
+                <img src="{{ video.thumbnail.url }}" width="300" height="150">
+            </a>
+        </div>
+    {% endfor %}
+</ul>
+</body>
+</html>
