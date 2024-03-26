@@ -1,0 +1,12 @@
+    {% include "top_info.html" %}
+<form action="/user/logout/" method="post">
+
+    <label id="logout-form">
+        {% csrf_token %}
+        Do you sure that you want to log out?
+        <input name="yes" value="yes" type="submit">
+        <input name="no" value="no" type="submit">
+    </label>
+
+
+</form>

@@ -1,6 +1,5 @@
 import os
 import subprocess
-
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
@@ -44,10 +43,10 @@ def generate_thumbnail(video_path, video):
                 video.thumbnail = os.path.join('thumbnails', thumbnail_name)
                 video.save()
             except subprocess.CalledProcessError as e:
-                print(f"Error generating thumbnail: {e}")
+                return {f"Error generating thumbnail: {e}"}
         pass
     else:
-        print(f"Video file not found: {video_path}")
+        return {f"Video file not found: {video_path}"}
 
 
 def videos_page(request):

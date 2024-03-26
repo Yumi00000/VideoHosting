@@ -3,7 +3,9 @@
     <title>Upload Video</title>
 </head>
 <body>
+    {% include "top_info.html" %}
 <h2>Upload Video</h2>
+
 <form method="post" enctype="multipart/form-data">
     {% csrf_token %}
     {{ form.as_p }}

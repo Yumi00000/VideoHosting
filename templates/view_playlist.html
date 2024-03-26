@@ -4,6 +4,7 @@
     <title>{{ playlist.name }}</title>
 </head>
 <body>
+    {% include "top_info.html" %}
 <h1>{{ playlist.name }}</h1>
 <ul>
     {% for video in playlist.videos.all %}
