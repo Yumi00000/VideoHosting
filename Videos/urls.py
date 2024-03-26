@@ -5,5 +5,6 @@ from Videos import views
 urlpatterns = [
     path('', views.videos_page, name='index'),
     path('upload/', views.upload_video, name='upload_video'),
-    path('<video_name>/', views.video_page, name='video_page'),
+    path('edit/<int:video_id>/<int:user_id>', views.edit_video, name='edit_video'),
+    path('video/<video_name>/', views.video_page, name='video_page'),
 ]

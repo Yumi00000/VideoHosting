@@ -9,7 +9,7 @@ from django.template.loader import render_to_string
 from Users.models import Followers
 from VideoInteractions.models import Playlist, History
 from videoHosting import settings
-from Videos.forms import VideoUploadForm
+from Videos.forms import VideoUploadForm, VideoEditForm
 from Videos.models import Video, Comment, LikesAndDislikes
 
 
@@ -24,10 +24,26 @@ def upload_video(request):
             video_path = os.path.join(settings.MEDIA_ROOT, str(video.video))
             generate_thumbnail(video_path, video)
 
-            return redirect('/')
+            return redirect(f'/video/{video.name}/')
     else:
         form = VideoUploadForm()
     return render(request, 'upload_video.html', {'form': form})
+
+
+def edit_video(request, video_id, user_id):
+    video = Video.objects.get(id=video_id, user_id=user_id)
+    form = VideoEditForm(request.POST, request.FILES, instance=video)
+    if request.method == 'POST':
+
+        if 'delete' in request.POST:
+            video.delete()
+            return redirect(f'/user/videos/{request.user.username}/')
+
+        if form.is_valid() and user_id == video.user_id:
+            form.save()
+            return redirect(f'/video/{video.name}/')
+
+    return render(request, 'edit_video.html', {'form': form})
 
 
 def generate_thumbnail(video_path, video):

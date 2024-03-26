@@ -1,3 +1,4 @@
+from django.core.validators import FileExtensionValidator
 from django.utils import timezone
 from django.db import models
 from Users.models import CustomUser
@@ -5,7 +6,9 @@ from Users.models import CustomUser
 
 class Video(models.Model):
     id = models.AutoField(primary_key=True)
-    video = models.FileField(upload_to='videos', null=False)
+    video = models.FileField(upload_to='videos', null=False, validators=[
+        FileExtensionValidator(allowed_extensions=['MOV', 'avi', 'mp4', 'webm', 'mkv'])])
+
     thumbnail = models.ImageField(upload_to='thumbnails', null=True)
     name = models.CharField(max_length=50)
     description = models.TextField(max_length=268)

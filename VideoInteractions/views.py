@@ -7,7 +7,7 @@ from VideoInteractions.models import Playlist
 from Videos.models import Video
 
 
-def create_playlist(request, video_id):
+def create_playlist(request):
     if request.method == 'POST':
         playlist_name = request.POST.get('playlist_name')
         if not playlist_name:
@@ -15,8 +15,7 @@ def create_playlist(request, video_id):
 
         playlist = Playlist.objects.create(user=request.user, slug=slugify(playlist_name), name=playlist_name)
         playlist.save()
-        video = Video.objects.get(id=video_id).name
-        return redirect(f'/{video}/')
+        return redirect('/')
     else:
         return render(request, 'create_playlist.html')
 
@@ -33,3 +32,8 @@ def add_to_playlist(request, playlist_slug, video_id):
 def view_playlist(request, playlist_slug):
     playlist = get_object_or_404(Playlist, slug=playlist_slug)
     return render(request, 'view_playlist.html', {'playlist': playlist})
+
+
+def all_playlists(request):
+    playlists = Playlist.objects.filter(user_id=request.user.id).all
+    return render(request, 'all_playlists.html', {"playlists": playlists})

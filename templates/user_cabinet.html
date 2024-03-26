@@ -6,7 +6,7 @@
 </head>
 <body>
 <form action="/user/" method="post">
-    {% include "top_info.html" %}
+ 
     {% csrf_token %}
     <h3>Username:</h3>
     <p>{{ form.username }}</p>

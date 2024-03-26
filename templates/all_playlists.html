@@ -1,0 +1,7 @@
+{% if playlists %}
+    {% for playlist in playlists %}
+        <a href="{% url "view_playlist" playlist.slug %}">Playlist: {{ playlist.name }}</a><br>
+    {% endfor %}
+{% else %}
+    <p>You don't have any playlists yet. <a href="/playlist/create/">Create one</a></p>
+{% endif %}

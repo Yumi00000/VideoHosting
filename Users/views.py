@@ -85,21 +85,22 @@ def logout_handler(request):
     return render(request, 'logout_handler.html')
 
 
-def user_info(request, username):
+def user_profile(request, username):
+    user_id = request.user.id
     user = CustomUser.objects.get(username=username)
     videos = Video.objects.filter(user_id=user.id)
-    return render(request, 'user_profile.html', {'user': user, 'videos': videos})
+    return render(request, 'user_profile.html', {'user': user, 'videos': videos, 'user_id': user_id})
 
 
 @login_required(login_url='/user/login/')
-def user_profile(request):
+def user_cabinet(request):
     if request.method == 'POST':
         form = CustomUserChangeForm(request.POST, instance=request.user)
         if form.is_valid():
             form.save()
             return redirect(f'/user/videos/{request.user.username}/')
     else:
-        form = CustomUserChangeForm(instance=request.user)  # Initialize form with user instance
+        form = CustomUserChangeForm(instance=request.user)
 
     return render(request, 'user_cabinet.html', {'form': form})
 
@@ -120,7 +121,4 @@ def change_password(request):
     return render(request, 'change_password.html', {'form': form})
 
 
-def top_info_view(request):
-    user = CustomUser.objects.get(username=request.user.username)
-    playlists = Playlist.objects.filter(user_id=user.id).all()
-    return render(request, 'top_info.html', {'playlists': playlists, 'user': user})
+
