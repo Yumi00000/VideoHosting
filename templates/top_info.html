@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+{% if user.is_authenticated %}
+<a href="/user/logout/">Log Out</a>
+{% elif not user %}
+<a href="/user/register">Sign up</a>
+{% else %}
+<a href="/user/login/">Login</a>
+{% endif %}
+<a href="/user/videos/{{ user.username }}">User chanel</a>
+<a href="/upload/">Upload Video</a>
+<a href="/">Back to all videos</a>
+
+<a href="/user/">Change user info</a> <br>
+{% if playlists %}
+    {% for playlist in playlists %}
+        <a href="/playlist/{{ playlist.slug }}">Your playlists</a>
+    {% endfor %}
+{% endif %}
+</body>
+</html>

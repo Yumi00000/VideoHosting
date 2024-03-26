@@ -4,11 +4,12 @@ from django.contrib.auth.decorators import login_required
 from django.core.mail import send_mail
 from django.core.signing import BadSignature, Signer
 from django.shortcuts import render, redirect
-from django.contrib import messages
+from django.contrib import messages, auth
 from django.contrib.auth.forms import AuthenticationForm, PasswordChangeForm
 
 from Users.forms import RegisterForm, CustomUserChangeForm
 from Users.models import CustomUser
+from VideoInteractions.models import Playlist
 from Videos.models import Video
 from videoHosting import settings
 
@@ -75,6 +76,15 @@ def login_handler(request):
     return render(request, 'login.html', {'form': form})
 
 
+def logout_handler(request):
+    if request.method == 'POST':
+        if request.user.is_authenticated and request.POST.get('yes'):
+            auth.logout(request)
+
+        return redirect('/')
+    return render(request, 'logout_handler.html')
+
+
 def user_info(request, username):
     user = CustomUser.objects.get(username=username)
     videos = Video.objects.filter(user_id=user.id)
@@ -108,3 +118,9 @@ def change_password(request):
     else:
         form = PasswordChangeForm(request.user)
     return render(request, 'change_password.html', {'form': form})
+
+
+def top_info_view(request):
+    user = CustomUser.objects.get(username=request.user.username)
+    playlists = Playlist.objects.filter(user_id=user.id).all()
+    return render(request, 'top_info.html', {'playlists': playlists, 'user': user})
