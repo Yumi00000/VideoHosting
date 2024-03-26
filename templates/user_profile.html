@@ -5,13 +5,16 @@
     <title>Title</title>
 </head>
 <body>
-    {% include "top_info.html" %}
+{% include "top_info.html" %}
 {{ user.username }}
 {{ user.followers_count }}
 {{ user.followings_count }}
-{% for video in  videos %}
-    <a href="/{{ video.name }}/"><img src="{{ video.thumbnail.url }}" alt="{{ video.name }}" width="300p"
-                                    height="150p"></a>
+{% for video in videos %}
+    <a href="/video/{{ video.name }}/"><img src="{{ video.thumbnail.url }}" alt="{{ video.name }}" width="300p"
+                                            height="150p"></a>
+    {% if user_id == video.user_id %}
+        <a href="{% url 'edit_video' video.id user_id %}">Edit video</a>
+    {% endif %}
 {% endfor %}
 </body>
 </html>

@@ -131,7 +131,7 @@
             <button type="button" id="add-to-playlist-btn">Add to Playlist</button>
         </div>
     {% else %}
-        <p>You don't have any playlists yet. <a href="{% url 'create_playlist' video.id %}">Create one</a></p>
+        <p>You don't have any playlists yet. <a href="{% url 'create_playlist'  %}">Create one</a></p>
     {% endif %}
 
     <label>Description: {{ video.description }}</label><br>
