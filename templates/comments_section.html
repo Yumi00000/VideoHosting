@@ -9,7 +9,9 @@ Comments Count {{ video.comments_count }}<br>
             <div class="comment">
                 {{ comment.user.username }}<br>
                 {{ comment.date }}<br>
-                {{ comment.comment }}<br>
+                {{ comment.comment }}
+                
+                <br>
             </div>
         {% endfor %}
     {% else %}

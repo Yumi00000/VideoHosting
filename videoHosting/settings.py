@@ -106,7 +106,7 @@ USE_TZ = True
 # Celery Configuration
 CELERY_BROKER_URL = "pyamqp://celeryuser:celeryuser@rabbitmq:5672//"
 CELERY_RESULT_BACKEND = 'rpc://'
-CELERY_ACCEPT_CONTENT = ['pickle']
+
 
 # Email
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
