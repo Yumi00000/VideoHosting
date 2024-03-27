@@ -1,4 +1,4 @@
-
+{% include "top_info.html" %}
 {% if playlists %}
     {% for playlist in playlists %}
         <a href="{% url "view_playlist" playlist.slug %}">Playlist: {{ playlist.name }}</a><br>

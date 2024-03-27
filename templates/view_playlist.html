@@ -7,9 +7,9 @@
     <script>
         $(document).ready(function () {
             $(document).on('click', '.remove-from-playlist-btn', function () {
-                var playlistSlug = $('#playlist-name').text(); // Use .text() to get the text content of the h1 element
-                var videoId = $(this).data('video-id'); // Use data attribute to get video id
-                var button = $(this); // Store reference to the button for possible disabling
+                var playlistSlug = $('#playlist-name').text();
+                var videoId = $(this).data('video-id'); 
+                var button = $(this);
 
                 $.ajax({
                     type: 'POST',

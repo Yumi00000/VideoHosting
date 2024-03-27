@@ -8,8 +8,10 @@
 
     <script src="https://malsup.github.io/jquery.form.js"></script>
     <script>
+
+
         $(document).ready(function () {
-            // Submit form on comment submit
+
             $('#commentForm').submit(function (event) {
                 event.preventDefault();
                 var formData = $(this).serialize();
@@ -63,6 +65,8 @@
                     }
                 });
             });
+
+            // Follow button click event
             $('button[name="action"][value="follow"]').click(function () {
                 var videoName = "{{ video.name }}";
                 $.ajax({
@@ -70,37 +74,36 @@
                     url: '/video/' + videoName + '/',
                     data: {action: 'follow', csrfmiddlewaretoken: '{{ csrf_token }}'},
                     success: function (response) {
-                        // Update dislike count
-                        $('button[name="action"][value="follow"]').text('follow: ' + response.follow_count);
-
+                        // Update follow count
+                        $('button[name="action"][value="follow"]').text('Follow: ' + response.follow_count);
                     },
                     error: function (xhr, status, error) {
                         console.error(error);
                     }
                 });
             });
-            $(document).ready(function () {
-                $('#add-to-playlist-btn').click(function () {
-                    var playlistSlug = $('#playlist-select').val();
-                    var videoId = {{ video.id }};
-                    $.ajax({
-                        type: 'POST',
-                        url: '/playlists/add/' + playlistSlug + '/' + videoId + '/',
-                        data: {csrfmiddlewaretoken: '{{ csrf_token }}'},
-                        success: function (response) {
 
-
-                            alert('Video added to playlist successfully.');
-                        },
-                        error: function (xhr, status, error) {
-                            console.error(error);
-                            alert('Video already in playlist.');
-                        }
-                    });
+            // Add to playlist button click event
+            $('#add-to-playlist-btn').click(function () {
+                var playlistSlug = $('#playlist-select').val();
+                var videoId = {{ video.id }};
+                $.ajax({
+                    type: 'POST',
+                    url: '/playlists/add/' + playlistSlug + '/' + videoId + '/',
+                    data: {csrfmiddlewaretoken: '{{ csrf_token }}'},
+                    success: function (response) {
+                        alert('Video added to playlist successfully.');
+                    },
+                    error: function (xhr, status, error) {
+                        console.error(error);
+                        alert('Video already in playlist.');
+                    }
                 });
             });
 
         });
+
+
     </script>
 
 </head>
@@ -117,14 +120,13 @@
     {{ video.date }}<br>
 
     Watchers Count: {{ video.watchers_count }} <br>
-
-
+{% if is_authenticated %}
     <button type="button" name="action" value="like">Like: {{ likes }}</button>
     <button type="button" name="action" value="dislike">Dislike: {{ dislikes }}</button>
     {% if playlist %}
         <div>
             <label>Select a playlist to add this video:</label>
-      
+
             <select id="playlist-select">
                 {% for playlist in playlist %}
                     <option value="{{ playlist.slug }}">{{ playlist.name }}</option>
@@ -161,6 +163,10 @@
     <div id="comments-container">
         {% include 'comments_section.html' %}
     </div>
+    {% else %}
+    Please authenticate to do more actions
+{% endif %}
+
 </form>
 </body>
 </html>
