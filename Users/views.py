@@ -8,7 +8,7 @@ from django.contrib import messages, auth
 from django.contrib.auth.forms import AuthenticationForm, PasswordChangeForm
 
 from Users.forms import RegisterForm, CustomUserChangeForm
-from Users.models import CustomUser
+from Users.models import CustomUser, Followers
 from VideoInteractions.models import Playlist
 from Videos.models import Video
 from videoHosting import settings
@@ -89,6 +89,8 @@ def user_profile(request, username):
     user_id = request.user.id
     user = CustomUser.objects.get(username=username)
     videos = Video.objects.filter(user_id=user.id)
+    user.followers_count = Followers.objects.filter(user_id=user.id, is_follow=True).count()
+    user.followings_count = Followers.objects.filter(following_id=user.id, is_follow=True).count()
     return render(request, 'user_profile.html', {'user': user, 'videos': videos, 'user_id': user_id})
 
 

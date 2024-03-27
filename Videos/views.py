@@ -2,9 +2,10 @@ import os
 import subprocess
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.template.loader import render_to_string
+from django.views.decorators.http import require_POST
 
 from Users.models import Followers
 from VideoInteractions.models import Playlist, History
@@ -78,12 +79,13 @@ def videos_page(request):
 def video_page(request, video_name):
     video = get_object_or_404(Video, name=video_name)
     video.watchers_count += 1
-    history, created = History.objects.get_or_create(user=request.user)
-    if created:
-        history.videos.add(video)
-    else:
-        history.videos.set([video.id])
-    history.save()
+    if request.user.is_authenticated:
+        history, created = History.objects.get_or_create(user=request.user)
+        if created:
+            history.videos.add(video)
+        else:
+            history.videos.set([video.id])
+        history.save()
 
     video.save()
     comments = Comment.objects.filter(video=video).order_by('-date')
@@ -120,15 +122,19 @@ def video_page(request, video_name):
             return JsonResponse(
                 {'comments_html': comments_html, 'likes': likes, 'dislikes': dislikes, 'follow_count': follow_count})
 
-        else:
-            messages.error(request, 'Please log in to add a comment or like/dislike.')
-
     follow_count = Followers.objects.filter(user=video.user, is_follow=True).count()
     likes = LikesAndDislikes.objects.filter(video=video, like=True).count()
     dislikes = LikesAndDislikes.objects.filter(video=video, dislike=True).count()
     context = {'video': video, 'comments': comments, 'likes': likes, 'dislikes': dislikes,
-               'follow_count': follow_count}
+               'follow_count': follow_count, 'is_authenticated': request.user.is_authenticated}
     if request.user.is_authenticated and Playlist.objects.filter(user=request.user).exists():
         context['playlist'] = Playlist.objects.filter(user=request.user).all()
     return render(request, 'video_page.html',
                   context=context)
+
+
+@require_POST
+def remove_comment(request, video_id, user_id):
+    comment = Comment.objects.get(video=video_id, user_id=user_id)
+    comment.delete()
+    return HttpResponse(status=204)
