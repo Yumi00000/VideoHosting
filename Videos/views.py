@@ -134,7 +134,7 @@ def video_page(request, video_name):
 
 
 @require_POST
-def remove_comment(request, video_id, user_id):
-    comment = Comment.objects.get(video=video_id, user_id=user_id)
+def remove_comment(request, video_id, user_id, comment_id):
+    comment = Comment.objects.get(video=video_id, user_id=user_id, id=comment_id)
     comment.delete()
     return HttpResponse(status=204)
