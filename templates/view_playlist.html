@@ -2,20 +2,49 @@
 <head>
     <meta charset="UTF-8">
     <title>{{ playlist.name }}</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://malsup.github.io/jquery.form.js"></script>
+    <script>
+        $(document).ready(function () {
+            $(document).on('click', '.remove-from-playlist-btn', function () {
+                var playlistSlug = $('#playlist-name').text(); // Use .text() to get the text content of the h1 element
+                var videoId = $(this).data('video-id'); // Use data attribute to get video id
+                var button = $(this); // Store reference to the button for possible disabling
+
+                $.ajax({
+                    type: 'POST',
+                    url: '/playlists/remove/' + playlistSlug + '/' + videoId + '/',
+                    data: {csrfmiddlewaretoken: '{{ csrf_token }}'},
+                    success: function (response) {
+                        button.closest('.video-container').remove(); // Remove the parent container of the video
+                        alert('Video removed from playlist successfully.');
+                    },
+                    error: function (xhr, status, error) {
+                        console.error(error);
+                        alert('An error occurred while removing the video from the playlist.');
+                    }
+                });
+            });
+        });
+    </script>
 </head>
 <body>
-    {% include "top_info.html" %}
-<h1>{{ playlist.name }}</h1>
-<ul>
-    {% for video in playlist.videos.all %}
-        <h2>{{ video.name }}</h2>
+{% include "top_info.html" %}
+<h1 id="playlist-name">{{ playlist.name }}</h1>
 
+{% for video in playlist.videos.all %}
+    <div class="video-container">
+        <h2>{{ video.name }}</h2>
         <div>
             <a href="/video/{{ video.name }}/">
                 <img src="{{ video.thumbnail.url }}" width="300" height="150">
             </a>
         </div>
-    {% endfor %}
-</ul>
+        {% if user == playlist.user %}
+        <button class="remove-from-playlist-btn" data-video-id="{{ video.id }}">Remove</button>
+    {% endif %}
+    </div>
+{% endfor %}
+
 </body>
 </html>

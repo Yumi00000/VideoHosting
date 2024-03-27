@@ -68,6 +68,8 @@ services:
       - CELERY_RESULT_BACKEND=rpc://
     command: celery -A videoHosting worker
     restart: always
+    env_file:
+      - .env
 
 volumes:
   pgdata:

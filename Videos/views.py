@@ -36,6 +36,8 @@ def edit_video(request, video_id, user_id):
     if request.method == 'POST':
 
         if 'delete' in request.POST:
+            os.remove(os.path.join(settings.MEDIA_ROOT, str(video.video)))
+            os.remove(os.path.join(settings.MEDIA_ROOT, str(video.thumbnail)))
             video.delete()
             return redirect(f'/user/videos/{request.user.username}/')
 

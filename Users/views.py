@@ -14,7 +14,7 @@ from Videos.models import Video
 from videoHosting import settings
 
 
-@shared_task(serializer='json')
+@shared_task
 def send_activation_email(base_url, user_id):
     user_signed = Signer().sign(user_id)
     signed_url = base_url + f"user/activate/{user_signed}"
