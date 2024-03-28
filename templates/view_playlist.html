@@ -8,7 +8,7 @@
         $(document).ready(function () {
             $(document).on('click', '.remove-from-playlist-btn', function () {
                 var playlistSlug = $('#playlist-name').text();
-                var videoId = $(this).data('video-id'); 
+                var videoId = $(this).data('video-id');
                 var button = $(this);
 
                 $.ajax({
@@ -16,7 +16,7 @@
                     url: '/playlists/remove/' + playlistSlug + '/' + videoId + '/',
                     data: {csrfmiddlewaretoken: '{{ csrf_token }}'},
                     success: function (response) {
-                        button.closest('.video-container').remove(); // Remove the parent container of the video
+                        button.closest('.video-container').remove();
                         alert('Video removed from playlist successfully.');
                     },
                     error: function (xhr, status, error) {
