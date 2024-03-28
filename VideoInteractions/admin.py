@@ -3,8 +3,7 @@ from VideoInteractions.models import History, Playlist
 
 
 class HistoryAdmin(admin.ModelAdmin):
-    list_display = ('user', 'date')
-    filter_horizontal = ('videos',)
+    list_display = ('user', 'date', 'video')
 
 
 class PlaylistAdmin(admin.ModelAdmin):

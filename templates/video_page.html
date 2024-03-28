@@ -120,53 +120,47 @@
     {{ video.date }}<br>
 
     Watchers Count: {{ video.watchers_count }} <br>
-{% if is_authenticated %}
-    <button type="button" name="action" value="like">Like: {{ likes }}</button>
-    <button type="button" name="action" value="dislike">Dislike: {{ dislikes }}</button>
-    {% if playlist %}
-        <div>
-            <label>Select a playlist to add this video:</label>
+    {% if is_authenticated %}
+        <button type="button" name="action" value="like">Like: {{ likes }}</button>
+        <button type="button" name="action" value="dislike">Dislike: {{ dislikes }}</button>
+        {% if playlist %}
+            <div>
+                <label>Select a playlist to add this video:</label>
 
-            <select id="playlist-select">
-                {% for playlist in playlist %}
-                    <option value="{{ playlist.slug }}">{{ playlist.name }}</option>
-                {% endfor %}
-            </select>
-            <button type="button" id="add-to-playlist-btn">Add to Playlist</button>
+                <select id="playlist-select">
+                    {% for playlist in playlist %}
+                        <option value="{{ playlist.slug }}">{{ playlist.name }}</option>
+                    {% endfor %}
+                </select>
+                <button type="button" id="add-to-playlist-btn">Add to Playlist</button>
+
+            </div>
+        {% else %}
+            <p>You don't have any playlists yet. <a href="{% url 'create_playlist' %}">Create one</a></p>
+        {% endif %}
+
+        <label>Description: {{ video.description }}</label><br>
+
+        Uploaded By: <a href="/user/videos/{{ video.user.username }}/">{{ video.user.username }}</a>
+        <button type="button" name="action" value="follow" id="follow-button">Follow:
+            <span id="follow-count">{{ follow_count }}</span>
+        </button>
+
+        <br>
+
 
         </div>
+        <form id="commentForm" action="/video/{{ video.name }}/" method="POST">
+        {% csrf_token %}
+   
+
+        <div id="comments-container">
+            {% include 'comments_section.html' %}
+        </div>
     {% else %}
-        <p>You don't have any playlists yet. <a href="{% url 'create_playlist' %}">Create one</a></p>
+        Please authenticate to do more actions
     {% endif %}
 
-    <label>Description: {{ video.description }}</label><br>
-
-    Uploaded By: <a href="/user/videos/{{ video.user.username }}/">{{ video.user.username }}</a>
-    <button type="button" name="action" value="follow" id="follow-button">Follow:
-        <span id="follow-count">{{ follow_count }}</span>
-    </button>
-
-    <br>
-
-
-</div>
-<form id="commentForm" action="/video/{{ video.name }}/" method="POST">
-    {% csrf_token %}
-    {% if messages %}
-        <ul>
-            {% for message in messages %}
-                <li>{{ message }}</li>
-            {% endfor %}
-        </ul>
-    {% endif %}
-
-    <div id="comments-container">
-        {% include 'comments_section.html' %}
-    </div>
-    {% else %}
-    Please authenticate to do more actions
-{% endif %}
-
-</form>
+    </form>
 </body>
 </html>

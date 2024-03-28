@@ -14,5 +14,5 @@ class Playlist(models.Model):
 
 class History(models.Model):
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
-    videos = models.ManyToManyField(Video, blank=True)
-    date = models.DateField(default=timezone.now)
+    video = models.ForeignKey(Video, on_delete=models.CASCADE, blank=True)
+    date = models.DateField(auto_now_add=True)

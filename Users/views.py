@@ -9,7 +9,7 @@ from django.contrib.auth.forms import AuthenticationForm, PasswordChangeForm
 
 from Users.forms import RegisterForm, CustomUserChangeForm
 from Users.models import CustomUser, Followers
-from VideoInteractions.models import Playlist
+from VideoInteractions.models import Playlist, History
 from Videos.models import Video
 from videoHosting import settings
 
@@ -132,3 +132,9 @@ def followers_page_view(request, user_id):
 def following_page_view(request, user_id):
     followings = Followers.objects.filter(following_id=user_id, is_follow=True).all()
     return render(request, 'following_page.html', {'followings': followings})
+
+
+@login_required(login_url='/user/login/')
+def history_view(request, user_id):
+    history = History.objects.filter(user_id=user_id).all().order_by('date')
+    return render(request, 'history_view.html', {"history": history})

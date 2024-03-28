@@ -52,3 +52,5 @@ def remove_from_playlist(request, playlist_slug, video_id):
     playlist = get_object_or_404(Playlist, slug=playlist_slug)
     playlist.videos.remove(video_id)
     return HttpResponse('Video removed')
+
+

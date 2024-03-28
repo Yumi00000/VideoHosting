@@ -73,12 +73,19 @@ def videos_page(request):
     category_param = request.GET.get('category')
     if category_param and category_param != 'all':
         videos = Video.objects.filter(category__name=category_param)
-    return render(request, 'videos_page.html', {'videos': videos})
+    return render(request, 'all_videos_page.html', {'videos': videos})
 
 
 def update_video_watchers(video, request):
     video.watchers_count += 1
     video.save()
+    if request.user.is_authenticated:
+        history_objs = History.objects.filter(user=request.user, video=video)
+        if history_objs.exists():
+            history_obj = history_objs.first()
+        else:
+            history_obj = History.objects.create(user=request.user, video=video)
+        history_obj.save()
 
 
 def handle_user_actions(request, video):
