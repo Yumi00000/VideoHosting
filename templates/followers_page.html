@@ -1,0 +1,4 @@
+{% include "top_info.html" %}
+{% for follower in followers %}
+    <a href="/user/videos/{{ follower.following.username }}/">{{ follower.following.username }}</a>
+{% endfor %}

@@ -1,3 +1,28 @@
+<script>
+    $(document).ready(function () {
+        $(document).on('click', '.remove-comment-btn', function () {
+            var userId = $(this).siblings('.user-id').text();
+            var commentId = $(this).siblings('.comment-id').text();
+            var videoId = $(this).data('video-id');
+            var commentContainer = $(this).parent('.comment'); // Find the parent comment container
+            $.ajax({
+                type: 'POST',
+                url: '/remove/comment/' + videoId + '/' + userId + '/' + commentId + '/',
+                data: {csrfmiddlewaretoken: '{{ csrf_token }}'},
+                success: function (response) {
+                    alert('Comment removed successfully.');
+                    commentContainer.remove();
+                },
+                error: function (xhr, status, error) {
+                    console.error(error);
+                    alert('An error occurred while removing the comment.');
+                }
+            });
+        });
+    });
+
+
+</script>
 Comments Count {{ video.comments_count }}<br>
 <textarea name="comment" id="comment-input" placeholder="Add comment here" maxlength="268"
           style="width: 1000px; height: 100px; vertical-align: top; resize: none"></textarea><br>
@@ -10,10 +35,18 @@ Comments Count {{ video.comments_count }}<br>
                 {{ comment.user.username }}<br>
                 {{ comment.date }}<br>
                 {{ comment.comment }}
-                
+                {% if user.id == comment.user.id %}
+                    <h1 hidden="hidden" class="user-id">{{ user.id }}</h1>
+                    <h1 hidden="hidden" class="comment-id">{{ comment.id }}</h1>
+                    <button class="remove-comment-btn" type="button" data-video-id="{{ comment.video_id }}">Remove
+                        comment
+                    </button>
+                {% endif %}
                 <br>
             </div>
         {% endfor %}
+
+
     {% else %}
         There are no comments yet.<br>
     {% endif %}

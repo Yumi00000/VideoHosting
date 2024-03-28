@@ -73,68 +73,86 @@ def videos_page(request):
     category_param = request.GET.get('category')
     if category_param and category_param != 'all':
         videos = Video.objects.filter(category__name=category_param)
-    return render(request, 'videos_page.html', {'videos': videos})
+    return render(request, 'all_videos_page.html', {'videos': videos})
+
+
+def update_video_watchers(video, request):
+    video.watchers_count += 1
+    video.save()
+    if request.user.is_authenticated:
+        history_objs = History.objects.filter(user=request.user, video=video)
+        if history_objs.exists():
+            history_obj = history_objs.first()
+        else:
+            history_obj = History.objects.create(user=request.user, video=video)
+        history_obj.save()
+
+
+def handle_user_actions(request, video):
+    if request.method == 'POST' and request.user.is_authenticated:
+        action = request.POST.get('action')
+        if action in ['like', 'dislike']:
+            handle_likes_dislikes(request, video, action)
+        elif action == 'follow':
+            handle_follow(request, video)
+
+        handle_comments(request, video)
+
+
+def handle_likes_dislikes(request, video, action):
+    if request.user != video.user:
+        likes_obj, created = LikesAndDislikes.objects.get_or_create(user=request.user, video=video)
+        if action == 'like':
+            likes_obj.like = not likes_obj.like
+            likes_obj.dislike = False
+        else:
+            likes_obj.dislike = not likes_obj.dislike
+            likes_obj.like = False
+        likes_obj.save()
+
+
+def handle_follow(request, video):
+    if request.user != video.user:
+        follows_obj, created = Followers.objects.get_or_create(user=video.user, following=request.user)
+        follows_obj.is_follow = not follows_obj.is_follow
+        follows_obj.save()
+
+
+def handle_comments(request, video):
+    content = request.POST.get('comment')
+    if content:
+        Comment.objects.create(user=request.user, video=video, comment=content)
+        video.comments_count += 1
+        video.save()
+
+
+def get_video_data(video):
+    follow_count = Followers.objects.filter(user=video.user, is_follow=True).count()
+    likes = LikesAndDislikes.objects.filter(video=video, like=True).count()
+    dislikes = LikesAndDislikes.objects.filter(video=video, dislike=True).count()
+    comments = Comment.objects.filter(video=video).order_by('-date')
+    comments_html = render_to_string('comments_section.html', {'comments': comments, 'video': video})
+    return {'comments_html': comments_html, 'likes': likes, 'dislikes': dislikes, 'follow_count': follow_count}
 
 
 def video_page(request, video_name):
     video = get_object_or_404(Video, name=video_name)
-    video.watchers_count += 1
-    if request.user.is_authenticated:
-        history, created = History.objects.get_or_create(user=request.user)
-        if created:
-            history.videos.add(video)
-        else:
-            history.videos.set([video.id])
-        history.save()
-
-    video.save()
+    update_video_watchers(video, request)
+    handle_user_actions(request, video)
     comments = Comment.objects.filter(video=video).order_by('-date')
-
-    if request.method == 'POST':
-        if request.user.is_authenticated:
-            content = request.POST.get('comment')
-            if content:
-                Comment.objects.create(user=request.user, video=video, comment=content)
-                video.comments_count += 1
-                video.save()
-            action = request.POST.get('action')
-            if action in ['like', 'dislike'] and request.user != video.user:
-                likes_obj, created = LikesAndDislikes.objects.get_or_create(user=request.user, video=video)
-                if action == 'like':
-                    likes_obj.like = not likes_obj.like
-                    likes_obj.dislike = False
-                else:
-                    likes_obj.dislike = not likes_obj.dislike
-                    likes_obj.like = False
-                likes_obj.save()
-            if action == 'follow' and request.user != video.user:
-                follows_obj, created = Followers.objects.get_or_create(user=video.user, following=request.user)
-                follows_obj.is_follow = not follows_obj.is_follow
-
-                follows_obj.save()
-
-            follow_count = Followers.objects.filter(user=video.user, is_follow=True).count()
-            likes = LikesAndDislikes.objects.filter(video=video, like=True).count()
-            dislikes = LikesAndDislikes.objects.filter(video=video, dislike=True).count()
-
-            comments = Comment.objects.filter(video=video).order_by('-date')
-            comments_html = render_to_string('comments_section.html', {'comments': comments, 'video': video})
-            return JsonResponse(
-                {'comments_html': comments_html, 'likes': likes, 'dislikes': dislikes, 'follow_count': follow_count})
-
-    follow_count = Followers.objects.filter(user=video.user, is_follow=True).count()
-    likes = LikesAndDislikes.objects.filter(video=video, like=True).count()
-    dislikes = LikesAndDislikes.objects.filter(video=video, dislike=True).count()
-    context = {'video': video, 'comments': comments, 'likes': likes, 'dislikes': dislikes,
-               'follow_count': follow_count, 'is_authenticated': request.user.is_authenticated}
+    context = {'video': video, 'is_authenticated': request.user.is_authenticated, 'comments': comments}
     if request.user.is_authenticated and Playlist.objects.filter(user=request.user).exists():
         context['playlist'] = Playlist.objects.filter(user=request.user).all()
-    return render(request, 'video_page.html',
-                  context=context)
+
+    if request.method == 'POST':
+        return JsonResponse(get_video_data(video))
+    else:
+        context.update(get_video_data(video))
+        return render(request, 'video_page.html', context=context)
 
 
 @require_POST
-def remove_comment(request, video_id, user_id):
-    comment = Comment.objects.get(video=video_id, user_id=user_id)
+def remove_comment(request, video_id, user_id, comment_id):
+    comment = Comment.objects.get(video=video_id, user_id=user_id, id=comment_id)
     comment.delete()
     return HttpResponse(status=204)

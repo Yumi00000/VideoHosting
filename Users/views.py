@@ -9,7 +9,7 @@ from django.contrib.auth.forms import AuthenticationForm, PasswordChangeForm
 
 from Users.forms import RegisterForm, CustomUserChangeForm
 from Users.models import CustomUser, Followers
-from VideoInteractions.models import Playlist
+from VideoInteractions.models import Playlist, History
 from Videos.models import Video
 from videoHosting import settings
 
@@ -91,6 +91,7 @@ def user_profile(request, username):
     videos = Video.objects.filter(user_id=user.id)
     user.followers_count = Followers.objects.filter(user_id=user.id, is_follow=True).count()
     user.followings_count = Followers.objects.filter(following_id=user.id, is_follow=True).count()
+    user.save()
     return render(request, 'user_profile.html', {'user': user, 'videos': videos, 'user_id': user_id})
 
 
@@ -123,4 +124,17 @@ def change_password(request):
     return render(request, 'change_password.html', {'form': form})
 
 
+def followers_page_view(request, user_id):
+    followers = Followers.objects.filter(user_id=user_id, is_follow=True).all()
+    return render(request, 'followers_page.html', {'followers': followers})
 
+
+def following_page_view(request, user_id):
+    followings = Followers.objects.filter(following_id=user_id, is_follow=True).all()
+    return render(request, 'following_page.html', {'followings': followings})
+
+
+@login_required(login_url='/user/login/')
+def history_view(request, user_id):
+    history = History.objects.filter(user_id=user_id).all().order_by('date')
+    return render(request, 'history_view.html', {"history": history})

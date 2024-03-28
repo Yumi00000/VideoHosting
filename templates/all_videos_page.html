@@ -5,11 +5,10 @@
     <title>Title</title>
 </head>
 <body>
-    {% include "top_info.html" %}
+{% include "top_info.html" %}
 <form action="/videos/" method="GET" onsubmit="chooseCategory()">
     <label for="category">Choose filter:</label>
     <select id="category" name="category">
-        <option value="A">All</option>
         <option value="E">Entertainments</option>
         <option value="G">Games</option>
         <option value="N">News</option>

@@ -20,8 +20,9 @@
         <a href="/user/videos/{{ user.username }}">User channel</a>
         <a href="/upload/">Upload Video</a>
         <a href="/user/">Change user info</a>
-        <a href="/playlists/">Your Playlists</a>
+        <a href="/playlists/{{ user.id }}/">Your Playlists</a>
         <a href="/playlists/create/">Create new playlist</a>
+        <a href="/user/history/{{ user.id }}/">History</a>
     {% endif %}
 
     <a href="/">Back to all videos</a>

@@ -1,0 +1,19 @@
+{% include "top_info.html" %}
+{% if history %}
+{% for video in history %}
+     <div class="video-container">
+        <h2>{{ video.video.name }}</h2>
+        <div>
+            <a href="/video/{{ video.video.name }}/">
+                <img src="{{ video.video.thumbnail.url }}" width="300" height="150">
+            </a>
+        </div>
+        {% if user == playlist.user %}
+        <button class="remove-from-playlist-btn" data-video-id="{{ video.video.id }}">Remove</button>
+    {% endif %}
+     </div>
+    <p>Added date: {{ video.date }}</p>
+{% endfor %}
+{% else %}
+There is not any videos yet
+{% endif %}
