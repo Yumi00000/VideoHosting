@@ -7,6 +7,7 @@ from django.views.decorators.http import require_POST
 from VideoInteractions.models import Playlist
 from Videos.models import Video
 
+
 @login_required(login_url='/user/login/')
 def create_playlist(request):
     if request.method == 'POST':
@@ -37,10 +38,13 @@ def view_playlist(request, playlist_slug):
     return render(request, 'view_playlist.html', {'playlist': playlist, 'user': request.user})
 
 
-@login_required(login_url='/user/login/')
-def all_playlists(request):
-    playlists = Playlist.objects.filter(user_id=request.user.id).all
-    return render(request, 'all_playlists.html', {"playlists": playlists})
+def all_user_playlists(request, user_id):
+    if request.user.is_authenticated and request.user.id == user_id:
+        playlists = Playlist.objects.filter(user_id=request.user.id).all
+        return render(request, 'all_user_playlists.html', {"playlists": playlists})
+    else:
+        playlists = Playlist.objects.filter(user_id=user_id).all
+        return render(request, 'all_user_playlists.html', {"playlists": playlists})
 
 
 @require_POST

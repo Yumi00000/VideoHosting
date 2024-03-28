@@ -11,7 +11,6 @@
                 data: {csrfmiddlewaretoken: '{{ csrf_token }}'},
                 success: function (response) {
                     alert('Comment removed successfully.');
-                    // Remove the comment container from the DOM
                     commentContainer.remove();
                 },
                 error: function (xhr, status, error) {
@@ -39,7 +38,9 @@ Comments Count {{ video.comments_count }}<br>
                 {% if user.id == comment.user.id %}
                     <h1 hidden="hidden" class="user-id">{{ user.id }}</h1>
                     <h1 hidden="hidden" class="comment-id">{{ comment.id }}</h1>
-                    <button class="remove-comment-btn" type="button" data-video-id="{{ comment.video_id }}">Remove comment</button>
+                    <button class="remove-comment-btn" type="button" data-video-id="{{ comment.video_id }}">Remove
+                        comment
+                    </button>
                 {% endif %}
                 <br>
             </div>

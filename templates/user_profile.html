@@ -6,9 +6,10 @@
 </head>
 <body>
 {% include "top_info.html" %}
-{{ user.username }}
-{{ user.followers_count }}
-{{ user.followings_count }}
+{{ user.username }}<br>
+<a href="/user/followers/{{ user.id }}/">Followers: {{ user.followers_count }}</a>
+<a href="/user/followings/{{ user.id }}/">Followings: {{ user.followings_count }}</a><br>
+<a href="/playlists/{{ user.id}}/">Chanel playlists</a>
 {% for video in videos %}
     <a href="/video/{{ video.name }}/"><img src="{{ video.thumbnail.url }}" alt="{{ video.name }}" width="300p"
                                             height="150p"></a>
