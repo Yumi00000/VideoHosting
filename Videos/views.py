@@ -44,7 +44,7 @@ def edit_video(request, video_id, user_id):
             return redirect(f'/user/videos/{request.user.username}/')
 
         if form.is_valid() and user_id == video.user_id:
-            video = form.save(commit=False)
+            video = form.save(commit=True)
             if "video" in request.FILES or "thumbnail" in request.FILES:
                 video_path = os.path.join(settings.MEDIA_ROOT, str(video.video))
                 generate_thumbnail(video_path, video)
