@@ -10,3 +10,9 @@ class VideoUploadForm(forms.ModelForm):
         fields = ['video', 'thumbnail', 'name', 'description', 'category']
 
 
+class SearchForm(forms.Form):
+    name = forms.CharField(label='Search by name', max_length=100)
+
+    class Meta:
+        model = Video
+        fields = ['name', ]
