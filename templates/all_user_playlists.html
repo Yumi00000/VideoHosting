@@ -1,8 +1,41 @@
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://malsup.github.io/jquery.form.js"></script>
+<script>
+    $(document).ready(function () {
+        $(document).on('click', '.remove-playlist-btn', function () {
+            var playlistSlug = $('#playlist-name').text();
+            var button = $(this);
+
+            $.ajax({
+                type: 'POST',
+                url: '/playlists/remove/' + playlistSlug + '/',
+                data: {csrfmiddlewaretoken: '{{ csrf_token }}'},
+                success: function (response) {
+                    button.closest('.playlist-container').remove(); // Remove the parent container of the video
+                    alert('Playlist removed successfully.');
+                },
+                error: function (xhr, status, error) {
+                    console.error(error);
+                    alert('An error occurred while removing  playlist.');
+                }
+            });
+        });
+    });
+</script>
 {% include "top_info.html" %}
 {% if playlists %}
     {% for playlist in playlists %}
-        <a href="{% url "view_playlist" playlist.slug %}">Playlist: {{ playlist.name }}</a><br>
+        <div class="playlist-container"><a href="{% url "view_playlist" playlist.slug %}"
+        >Playlist: {{ playlist.name }}</a><br>
+         <h1  id="playlist-name" hidden="hidden">{{ playlist.name }}</h1>
+            {% if user == playlist.user %}
+                <button class="remove-playlist-btn">Remove</button>
+            {% endif %}
+        </div>
+       
+        
     {% endfor %}
+
 {% else %}
     <p>There is not any playlists yet</p>
 {% endif %}
