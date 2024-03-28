@@ -21,7 +21,7 @@
                     data: formData,
                     success: function (response) {
                         $('#comments-container').html(response.comments_html);
-                        // Update comments count
+   
                         $('#comments-count').text('Comments Count: ' + response.comments_count);
                     },
                     error: function (xhr, status, error) {
@@ -38,7 +38,7 @@
                     url: '/video/' + videoName + '/',
                     data: {action: 'like', csrfmiddlewaretoken: '{{ csrf_token }}'},
                     success: function (response) {
-                        // Update like count
+  
                         $('button[name="action"][value="like"]').text('Like: ' + response.likes);
                         $('button[name="action"][value="dislike"]').text('Dislike: ' + response.dislikes);
                     },
@@ -48,7 +48,7 @@
                 });
             });
 
-            // Dislike button click event
+
             $('button[name="action"][value="dislike"]').click(function () {
                 var videoName = "{{ video.name }}";
                 $.ajax({
@@ -152,7 +152,7 @@
         </div>
         <form id="commentForm" action="/video/{{ video.name }}/" method="POST">
         {% csrf_token %}
-   
+
 
         <div id="comments-container">
             {% include 'comments_section.html' %}

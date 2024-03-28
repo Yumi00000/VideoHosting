@@ -1,5 +1,5 @@
 {% include "top_info.html" %}
-<form id="video-form" method="POST">
+<form id="video-form" enctype="multipart/form-data" method="POST">
     {% csrf_token %}
     {{ form.as_p }}
 
@@ -15,9 +15,7 @@
     document.addEventListener('DOMContentLoaded', function () {
         document.getElementById('delete').addEventListener('click', function () {
             if (confirm('Are you sure you want to delete this video?')) {
-                // Set a hidden input value to indicate deletion
                 document.getElementById('delete-input').value = 'delete';
-                // Submit the form
                 document.getElementById('video-form-delete').submit();
             }
         });

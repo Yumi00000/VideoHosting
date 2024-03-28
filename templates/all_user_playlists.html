@@ -11,7 +11,7 @@
                 url: '/playlists/remove/' + playlistSlug + '/',
                 data: {csrfmiddlewaretoken: '{{ csrf_token }}'},
                 success: function (response) {
-                    button.closest('.playlist-container').remove(); // Remove the parent container of the video
+                    button.closest('.playlist-container').remove();
                     alert('Playlist removed successfully.');
                 },
                 error: function (xhr, status, error) {
@@ -28,12 +28,12 @@
         <div class="playlist-container"><a href="{% url "view_playlist" playlist.slug %}"
         >Playlist: {{ playlist.name }}</a><br>
          <h1  id="playlist-name" hidden="hidden">{{ playlist.name }}</h1>
-            {% if user == playlist.user %}
-                <button class="remove-playlist-btn">Remove</button>
-            {% endif %}
+             {% if user == playlist.user %}
+            <button class="remove-playlist-btn">Remove</button>
+        {% endif %}
         </div>
        
-        
+   
     {% endfor %}
 
 {% else %}

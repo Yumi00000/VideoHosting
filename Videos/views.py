@@ -10,7 +10,7 @@ from django.views.decorators.http import require_POST
 from Users.models import Followers
 from VideoInteractions.models import Playlist, History
 from videoHosting import settings
-from Videos.forms import VideoUploadForm, VideoEditForm
+from Videos.forms import VideoUploadForm
 from Videos.models import Video, Comment, LikesAndDislikes
 
 
@@ -32,9 +32,10 @@ def upload_video(request):
 
 
 def edit_video(request, video_id, user_id):
-    video = Video.objects.get(id=video_id, user_id=user_id)
-    form = VideoEditForm(request.POST, request.FILES, instance=video)
+    video = get_object_or_404(Video, id=video_id, user_id=user_id)
+
     if request.method == 'POST':
+        form = VideoUploadForm(request.POST, request.FILES, instance=video)
 
         if 'delete' in request.POST:
             os.remove(os.path.join(settings.MEDIA_ROOT, str(video.video)))
@@ -43,10 +44,15 @@ def edit_video(request, video_id, user_id):
             return redirect(f'/user/videos/{request.user.username}/')
 
         if form.is_valid() and user_id == video.user_id:
-            form.save()
+            video = form.save(commit=False)
+            if "video" in request.FILES or "thumbnail" in request.FILES:
+                video_path = os.path.join(settings.MEDIA_ROOT, str(video.video))
+                generate_thumbnail(video_path, video)
             return redirect(f'/video/{video.name}/')
+    else:
+        form = VideoUploadForm(instance=video)
 
-    return render(request, 'edit_video.html', {'form': form})
+        return render(request, 'edit_video.html', {'form': form})
 
 
 def generate_thumbnail(video_path, video):
