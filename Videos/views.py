@@ -3,6 +3,7 @@ import subprocess
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse, HttpResponse
+from django.middleware.csrf import get_token
 from django.shortcuts import render, redirect, get_object_or_404
 from django.template.loader import render_to_string
 from django.views.decorators.http import require_POST
@@ -10,7 +11,7 @@ from django.views.decorators.http import require_POST
 from Users.models import Followers
 from VideoInteractions.models import Playlist, History
 from videoHosting import settings
-from Videos.forms import VideoUploadForm, SearchForm
+from Videos.forms import VideoUploadForm, SearchForm, EditVideoForm
 from Videos.models import Video, Comment, LikesAndDislikes
 
 
@@ -35,7 +36,7 @@ def edit_video(request, video_id, user_id):
     video = get_object_or_404(Video, id=video_id, user_id=user_id)
 
     if request.method == 'POST':
-        form = VideoUploadForm(request.POST, request.FILES, instance=video)
+        form = EditVideoForm(request.POST, request.FILES, instance=video)
 
         if 'delete' in request.POST:
             os.remove(os.path.join(settings.MEDIA_ROOT, str(video.video)))
@@ -44,13 +45,10 @@ def edit_video(request, video_id, user_id):
             return redirect(f'/user/videos/{request.user.username}/')
 
         if form.is_valid() and user_id == video.user_id:
-            video = form.save(commit=False)
-            if "video" in request.FILES or "thumbnail" in request.FILES:
-                video_path = os.path.join(settings.MEDIA_ROOT, str(video.video))
-                generate_thumbnail(video_path, video)
+            form.save()
             return redirect(f'/video/{video.name}/')
     else:
-        form = VideoUploadForm(instance=video)
+        form = EditVideoForm(instance=video)
 
         return render(request, 'edit_video.html', {'form': form})
 
@@ -140,16 +138,20 @@ def handle_comments(request, video):
     content = request.POST.get('comment')
     if content:
         Comment.objects.create(user=request.user, video=video, comment=content)
-        video.comments_count += 1
+
         video.save()
 
 
-def get_video_data(video):
+def get_video_data(video, request):
     follow_count = Followers.objects.filter(user=video.user, is_follow=True).count()
     likes = LikesAndDislikes.objects.filter(video=video, like=True).count()
     dislikes = LikesAndDislikes.objects.filter(video=video, dislike=True).count()
     comments = Comment.objects.filter(video=video).order_by('-date')
-    comments_html = render_to_string('comments_section.html', {'comments': comments, 'video': video})
+    csrf_token = get_token(request)
+    comments_html = render_to_string('comments_section.html',
+                                     {'comments': comments, 'video': video, 'user': request.user,
+                                      'csrf_token': csrf_token})
+
     return {'comments_html': comments_html, 'likes': likes, 'dislikes': dislikes, 'follow_count': follow_count}
 
 
@@ -163,16 +165,19 @@ def video_page(request, video_name):
         context['playlist'] = Playlist.objects.filter(user=request.user).all()
 
     if request.method == 'POST':
-        return JsonResponse(get_video_data(video))
+        return JsonResponse(get_video_data(video, request))
     else:
-        context.update(get_video_data(video))
+        context.update(get_video_data(video, request))
         return render(request, 'video_page.html', context=context)
 
 
 @require_POST
 def remove_comment(request, video_id, user_id, comment_id):
-    comment = Comment.objects.get(video=video_id, user_id=user_id, id=comment_id)
-    comment.delete()
+    try:
+        comment = Comment.objects.get(id=comment_id, video=video_id, user=user_id)
+        comment.delete()
+    except Comment.DoesNotExist:
+        return JsonResponse({'error': 'Comment does not exist'}, status=404)
     return HttpResponse(status=204)
 
 

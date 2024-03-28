@@ -16,3 +16,8 @@ class SearchForm(forms.Form):
     class Meta:
         model = Video
         fields = ['name', ]
+
+class EditVideoForm(forms.ModelForm):
+    class Meta:
+        model = Video
+        fields = ['video', 'thumbnail', 'name', 'description', 'category']

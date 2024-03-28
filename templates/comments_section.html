@@ -1,5 +1,7 @@
 <script>
+
     $(document).ready(function () {
+        $('#comment-input').val('');
         $(document).on('click', '.remove-comment-btn', function () {
             var userId = $(this).siblings('.user-id').text();
             var commentId = $(this).siblings('.comment-id').text();
@@ -10,20 +12,14 @@
                 url: '/remove/comment/' + videoId + '/' + userId + '/' + commentId + '/',
                 data: {csrfmiddlewaretoken: '{{ csrf_token }}'},
                 success: function (response) {
-                    alert('Comment removed successfully.');
                     commentContainer.remove();
                 },
-                error: function (xhr, status, error) {
-                    console.error(error);
-                    alert('An error occurred while removing the comment.');
-                }
             });
         });
     });
 
 
 </script>
-Comments Count {{ video.comments_count }}<br>
 <textarea name="comment" id="comment-input" placeholder="Add comment here" maxlength="268"
           style="width: 1000px; height: 100px; vertical-align: top; resize: none"></textarea><br>
 <br>
