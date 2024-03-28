@@ -8,5 +8,6 @@ urlpatterns = [
     path('edit/<int:video_id>/<int:user_id>/', views.edit_video, name='edit_video'),
     path('video/<video_name>/', views.video_page, name='video_page'),
     path('remove/comment/<int:video_id>/<int:user_id>/<int:comment_id>/', views.remove_comment, name='remove_comment'),
-    path('search/', views.search_view, name='search_view')
+    path('search/', views.search_view, name='search_view'),
+    path('category/<category_name>/', views.category, name='category')
 ]

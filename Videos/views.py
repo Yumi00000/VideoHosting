@@ -174,3 +174,8 @@ def remove_comment(request, video_id, user_id, comment_id):
     comment = Comment.objects.get(video=video_id, user_id=user_id, id=comment_id)
     comment.delete()
     return HttpResponse(status=204)
+
+
+def category(request, category_name):
+    videos = Video.objects.filter(category=category_name).all()
+    return render(request, 'videos_category.html', {'videos': videos})
