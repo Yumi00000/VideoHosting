@@ -6,36 +6,46 @@
 </head>
 <body>
 {% include "top_info.html" %}
-<form action="/videos/" method="GET" onsubmit="chooseCategory()">
-    <label for="category">Choose filter:</label>
-    <select id="category" name="category">
-        <option value="E">Entertainments</option>
-        <option value="G">Games</option>
-        <option value="N">News</option>
-    </select>
-    <button type="submit">Apply</button>
-</form>
+
+<label for="category">Choose filter:</label>
+<select id="category" name="category">
+    <option value="E">Entertainments</option>
+    <option value="G">Games</option>
+    <option value="N">News</option>
+</select>
+<button id="apply-filter-btn" type="button">Apply</button>
+
+{% if videos %}
+    {% for video in videos %}
+        <h2>{{ video.name }}</h2>
+        <div>
+            <a href="/video/{{ video.name }}/">
+                <img src="{{ video.thumbnail.url }}" width="300" height="150">
+            </a>
+        </div>
+    {% endfor %}
+{% else %}
+    There are no videos in this category.
+{% endif %}
 
 
-
-
-{% for video in videos %}
-    <h2>{{ video.name }}</h2>
-
-    <div>
-        <a href="/video/{{ video.name }}/">
-            <img src="{{ video.thumbnail.url }}" width="300" height="150">
-        </a>
-    </div>
-
-{% endfor %}
-
-
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script>
-    function chooseCategory() {
-        let categoryValue = document.getElementById('category').value;
-        document.querySelector('form').action = '/category/' + encodeURIComponent(categoryValue);
-    }
+    $('#apply-filter-btn').click(function () {
+        var catName = $('#category').val();
+        $.ajax({
+            type: 'POST',
+            url: '/category/' + catName + '/',
+            data: {csrfmiddlewaretoken: '{{ csrf_token }}'},
+            success: function (response) {
+                window.location.href = '/category/' + catName + '/';
+            },
+            error: function (xhr, status, error) {
+                console.error(error);
+            }
+        });
+    });
 </script>
+
 </body>
 </html>

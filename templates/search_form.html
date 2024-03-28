@@ -1,0 +1,6 @@
+{% include "top_info.html" %}
+<form method="post" action="/search/">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <input type="submit" value="Search">
+</form>

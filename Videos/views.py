@@ -10,7 +10,7 @@ from django.views.decorators.http import require_POST
 from Users.models import Followers
 from VideoInteractions.models import Playlist, History
 from videoHosting import settings
-from Videos.forms import VideoUploadForm
+from Videos.forms import VideoUploadForm, SearchForm
 from Videos.models import Video, Comment, LikesAndDislikes
 
 
@@ -53,6 +53,18 @@ def edit_video(request, video_id, user_id):
         form = VideoUploadForm(instance=video)
 
         return render(request, 'edit_video.html', {'form': form})
+
+
+def search_view(request):
+    if request.method == 'POST':
+        form = SearchForm(request.POST)
+        if form.is_valid():
+            search_query = form.cleaned_data['name']
+            results = Video.objects.filter(name__icontains=search_query)
+            return render(request, 'search_results.html', {'results': results})
+    else:
+        form = SearchForm()
+    return render(request, 'search_form.html', {'form': form})
 
 
 def generate_thumbnail(video_path, video):
@@ -162,3 +174,8 @@ def remove_comment(request, video_id, user_id, comment_id):
     comment = Comment.objects.get(video=video_id, user_id=user_id, id=comment_id)
     comment.delete()
     return HttpResponse(status=204)
+
+
+def category(request, category_name):
+    videos = Video.objects.filter(category=category_name).all()
+    return render(request, 'videos_category.html', {'videos': videos})
