@@ -10,7 +10,7 @@ from django.views.decorators.http import require_POST
 from Users.models import Followers
 from VideoInteractions.models import Playlist, History
 from videoHosting import settings
-from Videos.forms import VideoUploadForm, SearchForm
+from Videos.forms import VideoUploadForm, SearchForm, EditVideoForm
 from Videos.models import Video, Comment, LikesAndDislikes
 
 
@@ -35,7 +35,7 @@ def edit_video(request, video_id, user_id):
     video = get_object_or_404(Video, id=video_id, user_id=user_id)
 
     if request.method == 'POST':
-        form = VideoUploadForm(request.POST, request.FILES, instance=video)
+        form = EditVideoForm(request.POST, request.FILES, instance=video)
 
         if 'delete' in request.POST:
             os.remove(os.path.join(settings.MEDIA_ROOT, str(video.video)))
@@ -50,7 +50,7 @@ def edit_video(request, video_id, user_id):
                 generate_thumbnail(video_path, video)
             return redirect(f'/video/{video.name}/')
     else:
-        form = VideoUploadForm(instance=video)
+        form = EditVideoForm(instance=video)
 
         return render(request, 'edit_video.html', {'form': form})
 
