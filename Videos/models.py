@@ -10,11 +10,10 @@ class Video(models.Model):
         FileExtensionValidator(allowed_extensions=['MOV', 'avi', 'mp4', 'webm', 'mkv'])])
 
     thumbnail = models.ImageField(upload_to='thumbnails', null=True)
-    name = models.CharField(max_length=50)
+    name = models.CharField(max_length=50, unique=True)
     description = models.TextField(max_length=268)
     date = models.DateTimeField(auto_now_add=True)
     watchers_count = models.IntegerField(default=0)
-    comments_count = models.IntegerField(default=0)
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='videos')
     category = models.CharField(max_length=50,
                                 choices=(('G', 'Games'), ('E', 'Entertainments'), ('N', 'News')))
