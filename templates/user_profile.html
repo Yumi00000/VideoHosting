@@ -1,11 +1,6 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
-{% include "top_info.html" %}
+{% extends 'top_info.html' %}
+
+{% block content %}
 {{ user.username }}<br>
 <a href="/user/followers/{{ user.id }}/">Followers: {{ user.followers_count }}</a>
 <a href="/user/followings/{{ user.id }}/">Followings: {{ user.followings_count }}</a><br>
@@ -17,5 +12,4 @@
         <a href="{% url 'edit_video' video.id user_id %}">Edit video</a>
     {% endif %}
 {% endfor %}
-</body>
-</html>
+{% endblock %}

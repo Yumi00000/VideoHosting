@@ -1,4 +1,7 @@
-{% include "top_info.html" %}
+{% extends 'top_info.html' %}
+
+{% block content %}
 {% for following  in followings %}
     <a href="/user/videos/{{ following.user.username }}/">{{ following.user.username }}</a>
 {% endfor %}
+{% endblock %}

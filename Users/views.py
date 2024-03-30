@@ -6,10 +6,9 @@ from django.core.signing import BadSignature, Signer
 from django.shortcuts import render, redirect
 from django.contrib import messages, auth
 from django.contrib.auth.forms import AuthenticationForm, PasswordChangeForm
-
 from Users.forms import RegisterForm, CustomUserChangeForm
 from Users.models import CustomUser, Followers
-from VideoInteractions.models import Playlist, History
+from VideoInteractions.models import History
 from Videos.models import Video
 from videoHosting import settings
 

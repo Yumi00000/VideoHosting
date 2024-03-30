@@ -1,7 +1,5 @@
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>{{ playlist.name }}</title>
+{% extends 'top_info.html' %}
+
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://malsup.github.io/jquery.form.js"></script>
     <script>
@@ -27,24 +25,24 @@
             });
         });
     </script>
-</head>
-<body>
-{% include "top_info.html" %}
-<h1 id="playlist-name">{{ playlist.name }}</h1>
 
-{% for video in playlist.videos.all %}
-    <div class="video-container">
-        <h2>{{ video.name }}</h2>
-        <div>
-            <a href="/video/{{ video.name }}/">
-                <img src="{{ video.thumbnail.url }}" width="300" height="150">
-            </a>
+
+
+{% block content %}
+    <h1 id="playlist-name">{{ playlist.name }}</h1>
+
+    {% for video in playlist.videos.all %}
+        <div class="video-container">
+            <h2>{{ video.name }}</h2>
+            <div>
+                <a href="/video/{{ video.name }}/">
+                    <img src="{{ video.thumbnail.url }}" width="300" height="150">
+                </a>
+            </div>
+            {% if user == playlist.user %}
+                <button class="remove-from-playlist-btn" data-video-id="{{ video.id }}">Remove</button>
+            {% endif %}
         </div>
-        {% if user == playlist.user %}
-        <button class="remove-from-playlist-btn" data-video-id="{{ video.id }}">Remove</button>
-    {% endif %}
-    </div>
-{% endfor %}
+    {% endfor %}
 
-</body>
-</html>
+{% endblock %}

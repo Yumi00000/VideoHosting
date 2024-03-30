@@ -2,11 +2,11 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>{{ video.name }}</title>
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-
-    <script src="https://malsup.github.io/jquery.form.js"></script>
+    {##}
+    {#    <script src="https://malsup.github.io/jquery.form.js"></script>#}
     <script>
 
 
@@ -30,8 +30,6 @@
                     }
                 });
             });
-
-            // Like button click event
             $('button[name="action"][value="like"]').click(function () {
                 var videoName = "{{ video.name }}";
                 $.ajax({
@@ -48,8 +46,6 @@
                     }
                 });
             });
-
-
             $('button[name="action"][value="dislike"]').click(function () {
                 var videoName = "{{ video.name }}";
                 $.ajax({
@@ -75,7 +71,6 @@
                     url: '/video/' + videoName + '/',
                     data: {action: 'follow', csrfmiddlewaretoken: '{{ csrf_token }}'},
                     success: function (response) {
-                        // Update follow count
                         $('button[name="action"][value="follow"]').text('Follow: ' + response.follow_count);
                     },
                     error: function (xhr, status, error) {
@@ -84,7 +79,7 @@
                 });
             });
 
-            // Add to playlist button click event
+
             $('#add-to-playlist-btn').click(function () {
                 var playlistSlug = $('#playlist-select').val();
                 var videoId = {{ video.id }};
@@ -147,9 +142,7 @@
         Uploaded By: <a href="/user/videos/{{ video.user.username }}/">{{ video.user.username }}</a>
         <button type="button" name="action" value="follow" id="follow-button">Follow:
             <span id="follow-count">{{ follow_count }}</span>
-        </button>
-
-        <br>
+        </button><br>
 
 
         </div>

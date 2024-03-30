@@ -1,4 +1,6 @@
-{% include "top_info.html" %}
+{% extends 'top_info.html' %}
+
+{% block content %}
 {% if history %}
 {% for video in history %}
      <div class="video-container">
@@ -17,3 +19,4 @@
 {% else %}
 There is not any videos yet
 {% endif %}
+{% endblock %}

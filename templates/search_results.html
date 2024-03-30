@@ -1,4 +1,5 @@
-{% include "top_info.html" %}
+{% extends 'top_info.html' %}
+{% block content %}
 <h1>Search result</h1>
 {% if video in results.all %}
     {% for video in results.all %}
@@ -14,3 +15,4 @@
 {% else %}
     No videos found
 {% endif %}
+{% endblock %}

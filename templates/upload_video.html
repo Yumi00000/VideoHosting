@@ -1,15 +1,12 @@
-<html>
-<head>
-    <title>Upload Video</title>
-</head>
-<body>
-    {% include "top_info.html" %}
-<h2>Upload Video</h2>
+{% extends 'top_info.html' %}
 
-<form method="post" enctype="multipart/form-data">
+{% block content %}
+    <h2>Upload Video</h2>
+
+    <form method="post" enctype="multipart/form-data">
     {% csrf_token %}
     {{ form.as_p }}
     <button type="submit">Upload</button>
+
 </form>
-</body>
-</html>
+{% endblock %}

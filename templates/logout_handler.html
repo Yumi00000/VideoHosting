@@ -1,4 +1,6 @@
-    {% include "top_info.html" %}
+{% extends 'top_info.html' %}
+
+{% block content %}
 <form action="/user/logout/" method="post">
 
     <label id="logout-form">
@@ -10,3 +12,4 @@
 
 
 </form>
+{% endblock %}

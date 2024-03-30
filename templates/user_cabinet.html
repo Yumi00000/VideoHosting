@@ -1,29 +1,23 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
-<form action="/user/" method="post">
- {% include "top_info.html" %}
-    {% csrf_token %}
-    <h3>Username:</h3>
-    <p>{{ form.username }}</p>
-    <h3>First Name:</h3>
-    <p>{{ form.first_name }}</p>
-    <h3>Last Name:</h3>
-    <p>{{ form.last_name }}</p>
-    <h3>Email:</h3>
-    <p>{{ form.email }}</p>
-    <h3>Birthday:</h3>
-    <p>{{ form.birthday }}</p>
-    <h3>Gender:</h3>
-    <p>{{ form.gender }}</p>
-    <h3>Phon Number:</h3>
-    <p>{{ form.phone_number }}</p>
-    <a href="/user/password-change/">Change Password</a>
-    <input type="submit" value="Submit">
-</form>
-</body>
-</html>
+{% extends 'top_info.html' %}
+
+{% block content %}
+    <form action="/user/" method="post">
+        {% csrf_token %}
+        <h3>Username:</h3>
+        <p>{{ form.username }}</p>
+        <h3>First Name:</h3>
+        <p>{{ form.first_name }}</p>
+        <h3>Last Name:</h3>
+        <p>{{ form.last_name }}</p>
+        <h3>Email:</h3>
+        <p>{{ form.email }}</p>
+        <h3>Birthday:</h3>
+        <p>{{ form.birthday }}</p>
+        <h3>Gender:</h3>
+        <p>{{ form.gender }}</p>
+        <h3>Phon Number:</h3>
+        <p>{{ form.phone_number }}</p>
+        <a href="/user/password-change/">Change Password</a>
+        <input type="submit" value="Submit">
+    </form>
+{% endblock %}
