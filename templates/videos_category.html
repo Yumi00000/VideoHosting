@@ -1,13 +1,19 @@
-{% include "top_info.html" %}
-{% if videos %}
-    {% for video in videos %}
-        <h2>{{ video.name }}</h2>
-        <div>
-            <a href="/video/{{ video.name }}/">
-                <img src="{{ video.thumbnail.url }}" width="300" height="150">
-            </a>
-        </div>
-    {% endfor %}
-{% else %}
-    There are no videos in this category.
-{% endif %}
+
+{% extends 'top_info.html' %}
+
+{% block content %}
+
+    {% if videos %}
+        {% for video in videos %}
+            <h2>{{ video.name }}</h2>
+            <div>
+                <a href="/video/{{ video.name }}/">
+                    <img src="{{ video.thumbnail.url }}" width="300" height="150">
+                </a>
+            </div>
+        {% endfor %}
+    {% else %}
+        There are no videos in this category.
+    {% endif %}
+
+{% endblock %}

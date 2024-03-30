@@ -1,6 +1,5 @@
 import os
 import subprocess
-from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse, HttpResponse
 from django.middleware.csrf import get_token
@@ -138,8 +137,6 @@ def handle_comments(request, video):
     content = request.POST.get('comment')
     if content:
         Comment.objects.create(user=request.user, video=video, comment=content)
-
-        video.save()
 
 
 def get_video_data(video, request):

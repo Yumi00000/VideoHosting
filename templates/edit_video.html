@@ -1,4 +1,6 @@
-{% include "top_info.html" %}
+{% extends 'top_info.html' %}
+
+{% block content %}
 <form id="video-form" enctype="multipart/form-data" method="POST">
     {% csrf_token %}
     {{ form.as_p }}
@@ -21,3 +23,4 @@
         });
     });
 </script>
+{% endblock %}

@@ -1,4 +1,6 @@
-{% include "top_info.html" %}
+{% extends 'top_info.html' %}
+
+{% block content %}
 <form action="/user/login/" method="POST">
     {% csrf_token %}
     <h1> Login </h1>
@@ -9,3 +11,4 @@
     {{ form.as_p }}
     <input type="submit" value="login">
 </form>
+{% endblock %}
