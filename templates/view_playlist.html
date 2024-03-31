@@ -1,5 +1,5 @@
 {% extends 'top_info.html' %}
-
+{% block content %}
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://malsup.github.io/jquery.form.js"></script>
     <script>
@@ -28,7 +28,7 @@
 
 
 
-{% block content %}
+
     <h1 id="playlist-name">{{ playlist.name }}</h1>
 
     {% for video in playlist.videos.all %}

@@ -8,19 +8,22 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('VideoInteractions', '0003_alter_playlist_videos'),
-        ('Videos', '0002_alter_video_video'),
+        ("VideoInteractions", "0003_alter_playlist_videos"),
+        ("Videos", "0002_alter_video_video"),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='History',
+            name="History",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('date', models.DateField(auto_now_add=True)),
-                ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
-                ('video', models.ForeignKey(blank=True, on_delete=django.db.models.deletion.CASCADE, to='Videos.video')),
+                ("id", models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name="ID")),
+                ("date", models.DateField(auto_now_add=True)),
+                ("user", models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
+                (
+                    "video",
+                    models.ForeignKey(blank=True, on_delete=django.db.models.deletion.CASCADE, to="Videos.video"),
+                ),
             ],
         ),
     ]

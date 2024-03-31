@@ -6,14 +6,14 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('VideoInteractions', '0001_initial'),
-        ('Videos', '0001_initial'),
+        ("VideoInteractions", "0001_initial"),
+        ("Videos", "0001_initial"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='playlist',
-            name='videos',
-            field=models.ManyToManyField(blank=True, null=True, to='Videos.video'),
+            model_name="playlist",
+            name="videos",
+            field=models.ManyToManyField(blank=True, null=True, to="Videos.video"),
         ),
     ]
