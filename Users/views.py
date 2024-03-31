@@ -28,16 +28,16 @@ def send_activation_email(base_url, user_id):
 
 
 def register_handler(request):
-    if request.method == 'POST':
+    if request.method == "POST":
         form = RegisterForm(request.POST)
         if form.is_valid():
             form.instance.is_active = False
             form.save()
-            send_activation_email.delay(request.build_absolute_uri('/'), form.instance.id)
-            return redirect('/user/login/')
+            send_activation_email.delay(request.build_absolute_uri("/"), form.instance.id)
+            return redirect("/user/login/")
     else:
         form = RegisterForm()
-    return render(request, 'registration.html', {'form': form})
+    return render(request, "registration.html", {"form": form})
 
 
 def activate(request, user_signed):
@@ -55,33 +55,33 @@ def activate(request, user_signed):
 
 
 def login_handler(request):
-    if request.method == 'POST':
+    if request.method == "POST":
         form = AuthenticationForm(request, data=request.POST)
         if form.is_valid():
             # Authentication successful, log in the user
-            username = form.cleaned_data['username']
-            password = form.cleaned_data['password']
+            username = form.cleaned_data["username"]
+            password = form.cleaned_data["password"]
             user = authenticate(request, username=username, password=password)
             if user is not None:
                 login(request, user)
                 # Redirect to a success page
-                return redirect('/user/')
+                return redirect("/user/")
             else:
                 # Authentication failed, handle the error
-                messages.error(request, 'Invalid username or password.')
+                messages.error(request, "Invalid username or password.")
     else:
         form = AuthenticationForm(request)
 
-    return render(request, 'login.html', {'form': form})
+    return render(request, "login.html", {"form": form})
 
 
 def logout_handler(request):
-    if request.method == 'POST':
-        if request.user.is_authenticated and request.POST.get('yes'):
+    if request.method == "POST":
+        if request.user.is_authenticated and request.POST.get("yes"):
             auth.logout(request)
 
-        return redirect('/')
-    return render(request, 'logout_handler.html')
+        return redirect("/")
+    return render(request, "logout_handler.html")
 
 
 def user_profile(request, username):
@@ -91,49 +91,49 @@ def user_profile(request, username):
     user.followers_count = Followers.objects.filter(user_id=user.id, is_follow=True).count()
     user.followings_count = Followers.objects.filter(following_id=user.id, is_follow=True).count()
     user.save()
-    return render(request, 'user_profile.html', {'user': user, 'videos': videos, 'user_id': user_id})
+    return render(request, "user_profile.html", {"user": user, "videos": videos, "user_id": user_id})
 
 
-@login_required(login_url='/user/login/')
+@login_required(login_url="/user/login/")
 def user_cabinet(request):
-    if request.method == 'POST':
+    if request.method == "POST":
         form = CustomUserChangeForm(request.POST, instance=request.user)
         if form.is_valid():
             form.save()
-            return redirect(f'/user/videos/{request.user.username}/')
+            return redirect(f"/user/videos/{request.user.username}/")
     else:
         form = CustomUserChangeForm(instance=request.user)
 
-    return render(request, 'user_cabinet.html', {'form': form})
+    return render(request, "user_cabinet.html", {"form": form})
 
 
-@login_required(login_url='/user/login/')
+@login_required(login_url="/user/login/")
 def change_password(request):
-    if request.method == 'POST':
+    if request.method == "POST":
         form = PasswordChangeForm(request.user, request.POST)
         if form.is_valid():
             user = form.save()
             update_session_auth_hash(request, user)  # Important!
-            messages.success(request, 'Your password was successfully updated!')
-            return redirect('user_profile')
+            messages.success(request, "Your password was successfully updated!")
+            return redirect("user_profile")
         else:
-            messages.error(request, 'Please correct the error below.')
+            messages.error(request, "Please correct the error below.")
     else:
         form = PasswordChangeForm(request.user)
-    return render(request, 'change_password.html', {'form': form})
+    return render(request, "change_password.html", {"form": form})
 
 
 def followers_page_view(request, user_id):
     followers = Followers.objects.filter(user_id=user_id, is_follow=True).all()
-    return render(request, 'followers_page.html', {'followers': followers})
+    return render(request, "followers_page.html", {"followers": followers})
 
 
 def following_page_view(request, user_id):
     followings = Followers.objects.filter(following_id=user_id, is_follow=True).all()
-    return render(request, 'following_page.html', {'followings': followings})
+    return render(request, "following_page.html", {"followings": followings})
 
 
-@login_required(login_url='/user/login/')
+@login_required(login_url="/user/login/")
 def history_view(request, user_id):
-    history = History.objects.filter(user_id=user_id).all().order_by('date')
-    return render(request, 'history_view.html', {"history": history})
+    history = History.objects.filter(user_id=user_id).all().order_by("-date")
+    return render(request, "history_view.html", {"history": history})

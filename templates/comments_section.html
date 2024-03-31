@@ -6,7 +6,7 @@
             var userId = $(this).siblings('.user-id').text();
             var commentId = $(this).siblings('.comment-id').text();
             var videoId = $(this).data('video-id');
-            var commentContainer = $(this).parent('.comment'); // Find the parent comment container
+            var commentContainer = $(this).parent('.comment');
             $.ajax({
                 type: 'POST',
                 url: '/remove/comment/' + videoId + '/' + userId + '/' + commentId + '/',

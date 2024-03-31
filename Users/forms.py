@@ -6,34 +6,30 @@ from Users.models import CustomUser
 
 
 class RegisterForm(UserCreationForm):
-    birthday = forms.DateField(required=True,
-                               widget=forms.DateInput(format="%Y-%m-%d", attrs={"type": "date"}),
-                               input_formats=["%Y-%m-%d"]
-                               )
+    birthday = forms.DateField(
+        required=True, widget=forms.DateInput(format="%Y-%m-%d", attrs={"type": "date"}), input_formats=["%Y-%m-%d"]
+    )
     first_name = forms.CharField(required=True)
 
     class Meta:
         model = CustomUser
-        fields = ('username', 'first_name', 'last_name', 'birthday', 'gender',
-                  'phone_number', 'email')
+        fields = ("username", "first_name", "last_name", "birthday", "gender", "phone_number", "email")
 
     def clean(self):
         cleaned_data = super().clean()
-        password = cleaned_data.get('password')
-        password_confirmation = cleaned_data.get('confirm_password')
+        password = cleaned_data.get("password")
+        password_confirmation = cleaned_data.get("confirm_password")
         if password != password_confirmation:
-            raise forms.ValidationError('Passwords must match.')
+            raise forms.ValidationError("Passwords must match.")
         return cleaned_data
 
 
 class CustomUserChangeForm(UserChangeForm):
-    birthday = forms.DateField(required=True,
-                               widget=forms.DateInput(format="%Y-%m-%d", attrs={"type": "date"}),
-                               input_formats=["%Y-%m-%d"]
-                               )
+    birthday = forms.DateField(
+        required=True, widget=forms.DateInput(format="%Y-%m-%d", attrs={"type": "date"}), input_formats=["%Y-%m-%d"]
+    )
     first_name = forms.CharField(required=True)
 
     class Meta(UserChangeForm.Meta):
         model = CustomUser
-        fields = ('username', 'first_name', 'last_name', 'email', 'birthday', 'gender', 'phone_number', 'password')
-
+        fields = ("username", "first_name", "last_name", "email", "birthday", "gender", "phone_number", "password")
