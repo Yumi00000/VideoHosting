@@ -51,13 +51,14 @@ def edit_video(request, video_id, user_id):
 
         return render(request, "edit_video.html", {"form": form})
 
-
 def search_view(request):
     if request.method == "POST":
         form = SearchForm(request.POST)
         if form.is_valid():
             search_query = form.cleaned_data["name"]
-            results = Video.objects.filter(name__icontains=search_query)
+            print(search_query)
+            results = Video.objects.filter(name=search_query).all
+            print(results)
             return render(request, "search_results.html", {"results": results})
     else:
         form = SearchForm()
