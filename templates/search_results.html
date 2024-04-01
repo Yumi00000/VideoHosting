@@ -1,18 +1,18 @@
 {% extends 'top_info.html' %}
 {% block content %}
-<h1>Search result</h1>
-{% if video in results.all %}
-    {% for video in results.all %}
-        <h2>{{ video.name }}</h2>
+    <h1>Search result</h1>
+    {% if results %}
+        {% for video in results %}
+            <h2>{{ video.name }}</h2>
 
-        <div>
-            <a href="/video/{{ video.name }}/">
-                <img src="{{ video.thumbnail.url }}" width="300" height="150">
-            </a>
-        </div>
+            <div>
+                <a href="/video/{{ video.name }}/">
+                    <img src="{{ video.thumbnail.url }}" width="300" height="150">
+                </a>
+            </div>
 
-    {% endfor %}
-{% else %}
-    No videos found
-{% endif %}
+        {% endfor %}
+    {% else %}
+        No videos found
+    {% endif %}
 {% endblock %}
