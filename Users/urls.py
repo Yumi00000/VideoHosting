@@ -11,7 +11,7 @@ urlpatterns = [
     path("activate/<user_signed>", views.activate, name="activate"),
     path(
         "password-change/",
-        auth_views.PasswordChangeView.as_view(template_name="change_password.html"),
+        views.change_password,
         name="password_change",
     ),
     path("followers/<int:user_id>/", views.followers_page_view, name="followers_page_view"),
